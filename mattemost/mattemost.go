@@ -33,12 +33,12 @@ import (
 func queryAPIv4(method, endpoint string, payload io.Reader) (map[string]interface{}, error) {
 	baseUrl := viper.GetString("url")
 	if baseUrl == "" {
-		return nil, fmt.Errorf("the Mattermost URL is not defined")
+		return nil, fmt.Errorf("the Mattermost URL has not been set")
 	}
 
 	accessToken := viper.GetString("access-token")
 	if accessToken == "" {
-		return nil, fmt.Errorf("the Mattermost Access Token is not set")
+		return nil, fmt.Errorf("the Mattermost Access Token has not been set")
 	}
 
 	var bearer = "Bearer " + accessToken

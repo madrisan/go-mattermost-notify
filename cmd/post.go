@@ -20,7 +20,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"os"
 	"strings"
 
 	mattermost "github.com/madrisan/go-mattermost-notify/mattemost"
@@ -101,32 +100,27 @@ Example:
 		if strings.HasPrefix(mattermostChannel, "@") {
 			userIDFrom, err := getUserID("")
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "error: %v\n", err)
-				os.Exit(1)
+				HandleError("%v", err)
 			}
 
 			userIDTo, err := getUserID(strings.TrimLeft(mattermostChannel, "@"))
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "error: %v\n", err)
-				os.Exit(1)
+				HandleError("%v", err)
 			}
 
 			var found bool
 			payload, err := json.Marshal([]string{userIDFrom, userIDTo})
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "error: %v\n", err)
-				os.Exit(1)
+				HandleError("%v", err)
 			}
 
 			response, err := mattermost.Post("/channels/direct", bytes.NewReader(payload))
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "error: %v\n", err)
-				os.Exit(1)
+				HandleError("%v", err)
 			}
 			mattermostChannelID, found = response["id"].(string)
 			if !found {
-				fmt.Fprintf(os.Stderr, "error: cannot get the Mattermost Channel ID")
-				os.Exit(1)
+				HandleError("cannot get the Mattermost Channel ID")
 			}
 		} else {
 			mattermostChannelID = mattermostChannel
@@ -164,13 +158,11 @@ Example:
 
 		payload, err := json.Marshal(data)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "error: %v\n", err)
-			os.Exit(1)
+			HandleError("%v", err)
 		}
 		response, err := mattermost.Post("/posts", bytes.NewReader(payload))
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "error: %v\n", err)
-			os.Exit(1)
+			HandleError("%v", err)
 		}
 		if !viper.GetBool("quiet") {
 			prettyPrint(response)
@@ -202,8 +194,7 @@ func init() {
 
 	for _, requiredFlag := range requiredFlags {
 		if err := postCmd.MarkFlagRequired(requiredFlag); err != nil {
-			fmt.Fprintf(os.Stderr, "error: %v\n", err)
-			os.Exit(1)
+			HandleError("%v", err)
 		}
 	}
 }
