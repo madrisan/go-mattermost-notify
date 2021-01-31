@@ -92,7 +92,7 @@ var postCmd = &cobra.Command{
 	Long: `Post a message to a Mattermost channel or user using its REST APIv4 interface.
 
 Example:
-  post rybfbdi9ojy8xxxjjxc88kh3me --title "Job Status" --message "The job \#BEEF has failed" --level="critical"`,
+  post rybfbdi9ojy8xxxjjxc88kh3me --author CI --title "Job Status" --message "The job \#BEEF has failed" --level=critical`,
 	Run: func(cmd *cobra.Command, args []string) {
 		attachmentColor := getAttachmentColor(messageLevel)
 		//fmt.Printf("color: %s\n", attachmentColor)
@@ -197,7 +197,7 @@ func init() {
 		"author", "A", "", "author of the message")
 	postCmd.Flags().StringVarP(&mattermostChannel,
 		"channel", "c", "", "mattermost channel ID or username. Example: rybfbdi9ojy8xxxjjxc88kh3me or @alice")
-	postCmd.Flags().StringVarP(&mattermostTeam, "team", "T", "", "the mattermot team")
+	postCmd.Flags().StringVarP(&mattermostTeam, "team", "T", "", "the mattermost team")
 	postCmd.Flags().StringVarP(&messageLevel,
 		"level", "l", "info", "criticity level. Can be info (default), success, warning, or critical")
 	postCmd.Flags().StringVarP(&messageContent,
