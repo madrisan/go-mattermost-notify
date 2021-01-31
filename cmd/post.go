@@ -23,7 +23,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/madrisan/go-mattermost-notify/mattemost"
+	mattermost "github.com/madrisan/go-mattermost-notify/mattemost"
 	"github.com/spf13/cobra"
 )
 
