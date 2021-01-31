@@ -6,7 +6,15 @@ GOFMT_FILES?=$$(find . -name '*.go' | grep -v pb.go | grep -v vendor)
 EXTERNAL_TOOLS_CI=\
 	github.com/mitchellh/gox
 
+TEST?=$$($(GO_CMD) list ./... | grep -v /vendor/ | grep -v /integ)
+TEST_TIMEOUT?=45m
+
 default: prep
+
+# test runs the unit tests and vets the code
+test: ci-bootstrap
+	@CGO_ENABLED=$(CGO_ENABLED) \
+	$(GO_CMD) test -tags='$(BUILD_TAGS)' $(TEST) $(TESTARGS) -timeout=$(TEST_TIMEOUT) -parallel=20
 
 # bootstrap the build by downloading additional tools needed to build
 ci-bootstrap:
@@ -35,7 +43,6 @@ prep: bootstrap fmtcheck
 # any common errors.
 vet:
 	@$(GO_CMD) list -f '{{.Dir}}' ./... | grep -v /vendor/ \
-		| grep -v '.*github.com/hashicorp/vault$$' \
 		| xargs $(GO_CMD) vet ; if [ $$? -eq 1 ]; then \
 			echo ""; \
 			echo "Vet found suspicious constructs. Please check the reported constructs"; \

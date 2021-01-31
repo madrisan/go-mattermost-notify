@@ -35,13 +35,13 @@ func TestVersion(t *testing.T) {
 			"all_members",
 			Info{"99ee29e", "1.2.3", "dev"},
 			"1.2.3-dev",
-			"v1.2.3-dev (99ee29e)",
+			"1.2.3-dev (99ee29e)",
 		},
 		{
 			"version_only",
 			Info{"", "2.10", ""},
 			"2.10",
-			"v2.10",
+			"2.10",
 		},
 		{
 			"version_unknown",
