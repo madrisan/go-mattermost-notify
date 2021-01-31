@@ -1,0 +1,102 @@
+/*
+  Copyright 2021 Davide Madrisan <davide.madrisan@gmail.com>
+
+  Licensed under the Mozilla Public License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      https://www.mozilla.org/en-US/MPL/2.0/
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+// Package mattermost implements the API v4 calls to Mattemost
+package mattermost
+
+import (
+	"encoding/json"
+	"fmt"
+	"io"
+	"io/ioutil"
+	"net/http"
+	"strings"
+	"time"
+
+	"github.com/spf13/viper"
+)
+
+//func queryAPIv4(method, endpoint string, payload url.Values) (map[string]interface {}, error) {
+func queryAPIv4(method, endpoint string, payload io.Reader) (map[string]interface{}, error) {
+	baseUrl := viper.GetString("url")
+	if baseUrl == "" {
+		return nil, fmt.Errorf("the Mattermost URL is not defined")
+	}
+
+	accessToken := viper.GetString("access-token")
+	if accessToken == "" {
+		return nil, fmt.Errorf("the Mattermost Access Token is not set")
+	}
+
+	var bearer = "Bearer " + accessToken
+	var url = fmt.Sprintf("%s/api/v4/%s",
+		strings.TrimRight(baseUrl, "/"),
+		strings.TrimLeft(endpoint, "/"))
+
+	req, err := http.NewRequest(method, url, payload)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Authorization", bearer)
+	req.Header.Add("Accept", "application/json")
+
+	client := &http.Client{
+		Timeout: time.Second * 10,
+	}
+	response, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.StatusCode < 200 || response.StatusCode > 299 {
+		statusCodeText := http.StatusText(response.StatusCode)
+		return nil, fmt.Errorf("the HTTP query to %s has ended with a %d (\"%s\") code",
+			url, response.StatusCode, statusCodeText)
+	}
+
+	// Read body
+	defer response.Body.Close()
+
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	data := make(map[string]interface{})
+	if err := json.Unmarshal([]byte(body), &data); err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func Get(endpoint string) (map[string]interface{}, error) {
+	response, err := queryAPIv4(http.MethodGet, endpoint, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}
+
+func Post(endpoint string, payload io.Reader) (map[string]interface{}, error) {
+	response, err := queryAPIv4(http.MethodPost, endpoint, payload)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}
