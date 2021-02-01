@@ -190,8 +190,17 @@ func init() {
 	postCmd.Flags().StringVarP(&messageTitle,
 		"title", "t", "", "the title that will precede the text message")
 
-	postCmd.MarkFlagRequired("author")
-	postCmd.MarkFlagRequired("channel")
-	postCmd.MarkFlagRequired("message")
-	postCmd.MarkFlagRequired("title")
+	var requiredFlags = [...]string{
+		"author",
+		"channel",
+		"message",
+		"title",
+	}
+
+	for _, requiredFlag := range requiredFlags {
+		if err := postCmd.MarkFlagRequired(requiredFlag); err != nil {
+			fmt.Fprintf(os.Stderr, "error: %v\n", err)
+			os.Exit(1)
+		}
+	}
 }

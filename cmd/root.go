@@ -79,15 +79,25 @@ func initConfig() {
 		viper.SetConfigName(".go-mattermost-notify")
 	}
 
+	var envVars = [...]string{
+		"url",
+		"access-token",
+	}
+
 	viper.SetEnvPrefix("mattermost")
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	viper.AutomaticEnv() // read in environment variables that match
 
-	viper.BindEnv("url")
-	viper.BindPFlag("url", rootCmd.Flags().Lookup("url"))
-
-	viper.BindEnv("access-token")
-	viper.BindPFlag("access-token", rootCmd.Flags().Lookup("access-token"))
+	for _, envVar := range envVars {
+		if err := viper.BindEnv(envVar); err != nil {
+			fmt.Fprintf(os.Stderr, "error: %v\n", err)
+			os.Exit(1)
+		}
+		if err := viper.BindPFlag(envVar, rootCmd.Flags().Lookup(envVar)); err != nil {
+			fmt.Fprintf(os.Stderr, "error: %v\n", err)
+			os.Exit(1)
+		}
+	}
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
