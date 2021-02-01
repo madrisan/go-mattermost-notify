@@ -1,0 +1,21 @@
+name: golangci-lint
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    types: [assigned, edited, opened, synchronize, reopened]
+
+jobs:
+  golangci:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          # The version of golangci-lint is required and must be specified
+          # without patch version: we always use the latest patch version.
+          version: v1.29
