@@ -42,15 +42,16 @@ Usage:
 
 Flags:
   -A, --author string    author of the message
-  -c, --channel string   mattermost channel ID or username. Example: rybfbdi9ojy8xxxjjxc88kh3me or @alice
+  -c, --channel string   Mattermost channel ID or username. Example: rybfbdi9ojy8xxxjjxc88kh3me or @alice
   -h, --help             help for post
   -l, --level string     criticity level. Can be info (default), success, warning, or critical (default "info")
   -m, --message string   the (markdown-formatted) message to send to the Mattermost channel
-  -T, --team string      the mattermot team
+  -T, --team string      the Mattermost team
   -t, --title string     the title that will precede the text message
 
 Global Flags:
-  -a, --access-token string   mattermost Access Token. The command-line value has precedence over the MATTERMOST_ACCESS_TOKEN environment variable.
+  -a, --access-token string   Mattermost Access Token. The command-line value has precedence over the MATTERMOST_ACCESS_TOKEN environment variable.
       --config string         config file (default is $HOME/.go-mattermost-notify.yaml)
-  -u, --url string            mattermost URL. The command-line value has precedence over the MATTERMOST_URL environment variable.
+  -q, --quiet                 quiet mode
+  -u, --url string            Mattermost URL. The command-line value has precedence over the MATTERMOST_URL environment variable.
 ```

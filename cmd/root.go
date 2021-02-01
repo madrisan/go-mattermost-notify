@@ -28,9 +28,7 @@ import (
 )
 
 var cfgFile string
-
-var mattermostURL string
-var mattermostAccessToken string
+var mattermostURL, mattermostAccessToken string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -55,10 +53,17 @@ func init() {
 		"config", "", "config file (default is $HOME/.go-mattermost-notify.yaml)")
 	rootCmd.PersistentFlags().StringVarP(&mattermostURL,
 		"url", "u", "",
-		"mattermost URL. The command-line value has precedence over the MATTERMOST_URL environment variable.")
+		"Mattermost URL. The command-line value has precedence over the MATTERMOST_URL environment variable.")
 	rootCmd.PersistentFlags().StringVarP(&mattermostAccessToken,
 		"access-token", "a", "",
-		"mattermost Access Token. The command-line value has precedence over the MATTERMOST_ACCESS_TOKEN environment variable.")
+		"Mattermost Access Token. The command-line value has precedence over the MATTERMOST_ACCESS_TOKEN environment variable.")
+	rootCmd.PersistentFlags().BoolP("quiet", "q", false, "quiet mode")
+
+	err := viper.BindPFlag("quiet", rootCmd.PersistentFlags().Lookup("quiet"))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error: unable to bind 'quiet' flag: %v\n", err)
+		os.Exit(1)
+	}
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -70,7 +75,7 @@ func initConfig() {
 		// Find home directory.
 		home, err := homedir.Dir()
 		if err != nil {
-			fmt.Println(err)
+			fmt.Fprintf(os.Stderr, "error: %v\n", err)
 			os.Exit(1)
 		}
 

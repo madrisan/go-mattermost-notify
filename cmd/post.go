@@ -25,6 +25,7 @@ import (
 
 	mattermost "github.com/madrisan/go-mattermost-notify/mattemost"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var mattermostChannel, mattermostTeam string
@@ -171,7 +172,9 @@ Example:
 			fmt.Fprintf(os.Stderr, "error: %v\n", err)
 			os.Exit(1)
 		}
-		prettyPrint(response)
+		if viper.GetBool("quiet") == false {
+			prettyPrint(response)
+		}
 	},
 }
 
@@ -181,8 +184,8 @@ func init() {
 	postCmd.Flags().StringVarP(&messageAuthor,
 		"author", "A", "", "author of the message")
 	postCmd.Flags().StringVarP(&mattermostChannel,
-		"channel", "c", "", "mattermost channel ID or username. Example: rybfbdi9ojy8xxxjjxc88kh3me or @alice")
-	postCmd.Flags().StringVarP(&mattermostTeam, "team", "T", "", "the mattermost team")
+		"channel", "c", "", "Mattermost channel ID or username. Example: rybfbdi9ojy8xxxjjxc88kh3me or @alice")
+	postCmd.Flags().StringVarP(&mattermostTeam, "team", "T", "", "the Mattermost team")
 	postCmd.Flags().StringVarP(&messageLevel,
 		"level", "l", "info", "criticity level. Can be info (default), success, warning, or critical")
 	postCmd.Flags().StringVarP(&messageContent,
