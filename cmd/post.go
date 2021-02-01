@@ -172,7 +172,7 @@ Example:
 			fmt.Fprintf(os.Stderr, "error: %v\n", err)
 			os.Exit(1)
 		}
-		if viper.GetBool("quiet") == false {
+		if !viper.GetBool("quiet") {
 			prettyPrint(response)
 		}
 	},
