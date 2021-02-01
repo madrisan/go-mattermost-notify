@@ -62,7 +62,6 @@ func getUserID(username string) (string, error) {
 		}
 	}
 
-	//fmt.Println("getUserID username:", username)
 	endpoint := fmt.Sprintf("/users/username/%s", username)
 	response, err := mattermost.Get(endpoint)
 	if err != nil {
@@ -95,7 +94,6 @@ Example:
   post rybfbdi9ojy8xxxjjxc88kh3me --author CI --title "Job Status" --message "The job \#BEEF has failed" --level=critical`,
 	Run: func(cmd *cobra.Command, args []string) {
 		attachmentColor := getAttachmentColor(messageLevel)
-		//fmt.Printf("color: %s\n", attachmentColor)
 
 		var mattermostChannelID string
 
@@ -105,14 +103,12 @@ Example:
 				fmt.Fprintf(os.Stderr, "error: %v\n", err)
 				os.Exit(1)
 			}
-			//fmt.Printf("userIDFrom: %s\n", userIDFrom)
 
 			userIDTo, err := getUserID(strings.TrimLeft(mattermostChannel, "@"))
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "error: %v\n", err)
 				os.Exit(1)
 			}
-			//fmt.Printf("userIDTo: %s\n", userIDTo)
 
 			var found bool
 			payload, err := json.Marshal([]string{userIDFrom, userIDTo})
@@ -134,7 +130,6 @@ Example:
 		} else {
 			mattermostChannelID = mattermostChannel
 		}
-		//fmt.Printf("mattermostChannelID: %s\n", mattermostChannelID)
 
 		type Attachment struct {
 			Author string `json:"author_name"`
@@ -167,7 +162,6 @@ Example:
 		}
 
 		payload, err := json.Marshal(data)
-		//fmt.Printf("payload: %v", string(payload))
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "error: %v\n", err)
 			os.Exit(1)
@@ -177,7 +171,6 @@ Example:
 			fmt.Fprintf(os.Stderr, "error: %v\n", err)
 			os.Exit(1)
 		}
-		//fmt.Printf("response: %v", response)
 		prettyPrint(response)
 	},
 }
@@ -185,14 +178,6 @@ Example:
 func init() {
 	rootCmd.AddCommand(postCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// postCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
 	postCmd.Flags().StringVarP(&messageAuthor,
 		"author", "A", "", "author of the message")
 	postCmd.Flags().StringVarP(&mattermostChannel,

@@ -29,7 +29,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-//func queryAPIv4(method, endpoint string, payload url.Values) (map[string]interface {}, error) {
+// queryAPIv4 makes a query to Mattermost using its REST API v4
 func queryAPIv4(method, endpoint string, payload io.Reader) (map[string]interface{}, error) {
 	baseUrl := viper.GetString("url")
 	if baseUrl == "" {
@@ -83,6 +83,7 @@ func queryAPIv4(method, endpoint string, payload io.Reader) (map[string]interfac
 	return data, nil
 }
 
+// Get makes a query of type GET to Mattermost
 func Get(endpoint string) (map[string]interface{}, error) {
 	response, err := queryAPIv4(http.MethodGet, endpoint, nil)
 	if err != nil {
@@ -92,6 +93,7 @@ func Get(endpoint string) (map[string]interface{}, error) {
 	return response, nil
 }
 
+// Post makes a query of type POST to Mattermost
 func Post(endpoint string, payload io.Reader) (map[string]interface{}, error) {
 	response, err := queryAPIv4(http.MethodPost, endpoint, payload)
 	if err != nil {
