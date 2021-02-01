@@ -36,7 +36,7 @@ var mattermostAccessToken string
 var rootCmd = &cobra.Command{
 	Use:   "go-mattermost-notify",
 	Short: "Mattermost client in go",
-	Long: `Post a message to a Mattermost channel using its REST APIv4 interface.`,
+	Long:  `Post a message to a Mattermost channel using its REST APIv4 interface.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -54,9 +54,11 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile,
 		"config", "", "config file (default is $HOME/.go-mattermost-notify.yaml)")
 	rootCmd.PersistentFlags().StringVarP(&mattermostURL,
-		"url", "u", "", "mattermost URL")
+		"url", "u", "",
+		"mattermost URL. The command-line value has precedence over the MATTERMOST_URL environment variable.")
 	rootCmd.PersistentFlags().StringVarP(&mattermostAccessToken,
-		"access-token", "a", "", "mattermost Access Token")
+		"access-token", "a", "",
+		"mattermost Access Token. The command-line value has precedence over the MATTERMOST_ACCESS_TOKEN environment variable.")
 }
 
 // initConfig reads in config file and ENV variables if set.

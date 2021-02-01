@@ -1,4 +1,4 @@
-# Mattermost Simple Notifier written in Go
+# A simple Mattermost notifier written in Go 
 
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://spdx.org/licenses/Apache-2.0.html)
 
@@ -19,11 +19,11 @@ $GOPATH/bin/go-mattermost-notify version
 ## Usage
 
 ```
-$ ./bin/go-mattermost-notify post --help
+$ go-mattermost-notify post --help
 Post a message to a Mattermost channel or user using its REST APIv4 interface.
 
 Example:
-  post rybfbdi9ojy8xxxjjxc88kh3me --author CI --title "Job Status" --message "The job \#BEEF has failed" --level=critical
+  go-mattermost-notify post rybfbdi9ojy8xxxjjxc88kh3me --author CI --title "Job Status" --message "The job \#BEEF has failed :bug:" --level=critical
 
 Usage:
   go-mattermost-notify post [flags]
@@ -38,7 +38,7 @@ Flags:
   -t, --title string     the title that will precede the text message
 
 Global Flags:
-  -a, --access-token string   mattermost Access Token
+  -a, --access-token string   mattermost Access Token. The command-line value has precedence over the MATTERMOST_ACCESS_TOKEN environment variable.
       --config string         config file (default is $HOME/.go-mattermost-notify.yaml)
-  -u, --url string            mattermost URL
+  -u, --url string            mattermost URL. The command-line value has precedence over the MATTERMOST_URL environment variable.
 ```
