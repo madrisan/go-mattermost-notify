@@ -9,7 +9,16 @@ EXTERNAL_TOOLS_CI=\
 TEST?=$$($(GO_CMD) list ./... | grep -v /vendor/ | grep -v /integ)
 TEST_TIMEOUT?=45m
 
-default: prep
+default: dev
+
+# bin generates the releasable binaries
+bin: prep
+	@CGO_ENABLED=$(CGO_ENABLED) BUILD_TAGS='$(BUILD_TAGS)' sh -c "'$(CURDIR)/scripts/build.sh'"
+
+# dev creates binaries for testing the application locally. These are put
+# into ./bin/ as well as $GOPATH/bin
+dev: prep
+	@CGO_ENABLED=$(CGO_ENABLED) BUILD_TAGS='$(BUILD_TAGS)' DEV_BUILD=1 sh -c "'$(CURDIR)/scripts/build.sh'"
 
 # test runs the unit tests and vets the code
 test: ci-bootstrap
@@ -17,13 +26,7 @@ test: ci-bootstrap
 	$(GO_CMD) test -tags='$(BUILD_TAGS)' $(TEST) $(TESTARGS) -timeout=$(TEST_TIMEOUT) -parallel=20
 
 # bootstrap the build by downloading additional tools needed to build
-ci-bootstrap:
-	@for tool in  $(EXTERNAL_TOOLS_CI) ; do \
-		echo "Installing/Updating $$tool" ; \
-		GO111MODULE=off $(GO_CMD) get -u $$tool; \
-	done
-
-bootstrap: ci-bootstrap
+bootstrap:
 	@for tool in  $(EXTERNAL_TOOLS_CI) ; do \
 		echo "Installing/Updating $$tool" ; \
 		GO111MODULE=off $(GO_CMD) get -u $$tool; \
@@ -34,10 +37,7 @@ bootstrap: ci-bootstrap
 fmtcheck:
 	@sh -c "'$(CURDIR)/scripts/gofmtcheck.sh'"
 
-# dev creates binaries for testing Vault locally. These are put
-# into ./bin/ as well as $GOPATH/bin
 prep: bootstrap fmtcheck
-	@CGO_ENABLED=$(CGO_ENABLED) BUILD_TAGS='$(BUILD_TAGS)' sh -c "'$(CURDIR)/scripts/build.sh'"
 
 # vet runs the Go source code static analysis tool `vet` to find
 # any common errors.

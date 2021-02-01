@@ -1,12 +1,14 @@
-# A simple Mattermost notifier written in Go 
+![](images/mattermost_logo.png?raw=true)
 
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://spdx.org/licenses/Apache-2.0.html)
 
+# A simple Mattermost notifier written in Go
+
 A Go (golang) simple client for sending [Mattermost](https://mattermost.com/) posts via its REST API v4.
 
-![](images/mattermost_logo.png?raw=true)
-
 ## Build
+
+### Using go get
 
 ```
 [ "$GOPATH" ] || export GOPATH="$HOME/go"
@@ -14,6 +16,16 @@ go get -u github.com/madrisan/go-mattermost-notify
 
 export PATH="$PATH:$GOPATH/bin"
 $GOPATH/bin/go-mattermost-notify version
+```
+
+### From the source code (for developers)
+
+```
+git clone https://github.com/madrisan/go-mattermost-notify
+cd go-mattermost-notify
+
+make dev     # creates the binary for testing the application locally
+make bin     # creates the binaries for all the supported OS and architectures
 ```
 
 ## Usage

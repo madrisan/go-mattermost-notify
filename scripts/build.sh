@@ -21,7 +21,11 @@ GIT_COMMIT="$(git rev-parse HEAD)"
 GIT_DIRTY="$(test -n "`git status --porcelain`" && echo "+CHANGES" || true)"
 
 # If its dev mode, only build for ourself
-if [ "${XC_OSARCH}x" != "x" ]; then
+if [ "${DEV_BUILD}x" != "x" ] && [ "${XC_OSARCH}x" == "x" ]; then
+    XC_OS=$(${GO_CMD} env GOOS)
+    XC_ARCH=$(${GO_CMD} env GOARCH)
+    XC_OSARCH=$(${GO_CMD} env GOOS)/$(${GO_CMD} env GOARCH)
+elif [ "${XC_OSARCH}x" != "x" ]; then
     IFS='/' read -ra SPLITXC <<< "${XC_OSARCH}"
         DEV_PLATFORM="./pkg/${SPLITXC[0]}_${SPLITXC[1]}"
 fi
@@ -76,7 +80,7 @@ for F in $(find ${DEV_PLATFORM} -mindepth 1 -maxdepth 1 -type f); do
     cp ${F} ${MAIN_GOPATH}/bin/
 done
 
-if [ "${VAULT_DEV_BUILD}x" = "x" ]; then
+if [ "${DEV_BUILD}x" = "x" ]; then
     # Zip and copy to the dist dir
     echo "==> Packaging..."
     for PLATFORM in $(find ./pkg -mindepth 1 -maxdepth 1 -type d); do
