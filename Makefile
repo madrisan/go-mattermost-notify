@@ -7,7 +7,7 @@ EXTERNAL_TOOLS_CI=\
 	github.com/mitchellh/gox
 
 TEST?=$$($(GO_CMD) list ./... | grep -v /vendor/ | grep -v /integ)
-TEST_TIMEOUT?=45m
+TEST_TIMEOUT?=5m
 
 default: dev
 
