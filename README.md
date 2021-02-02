@@ -19,7 +19,7 @@ export PATH="$PATH:$GOPATH/bin"
 $GOPATH/bin/go-mattermost-notify version
 ```
 
-### From the source code (for developers)
+### From the source code
 
 ```
 git clone https://github.com/madrisan/go-mattermost-notify
@@ -55,4 +55,29 @@ Global Flags:
       --config string         config file (default is $HOME/.go-mattermost-notify.yaml)
   -q, --quiet                 quiet mode
   -u, --url string            Mattermost URL. The command-line value has precedence over the MATTERMOST_URL environment variable.
+```
+
+## Dockerfile
+
+A simple Dockerfile for creating a container providing `go-mattermost-notify` follows.
+
+```
+FROM golang:1.15.6-buster as compiler
+
+WORKDIR /usr/local/src
+
+ENV GOPATH /go
+RUN mkdir -p $GOPATH/src $GOPATH/bin \
+    && chmod -R 755 $GOPATH
+ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+
+COPY go-mattermost-notify go-mattermost-notify
+RUN make -C go-mattermost-notify dev
+
+FROM alpine:3.13
+
+WORKDIR /usr/local/bin
+COPY --from=compiler /go/bin/go-mattermost-notify go-mattermost-notify
+
+CMD ["./go-mattermost-notify"]
 ```
