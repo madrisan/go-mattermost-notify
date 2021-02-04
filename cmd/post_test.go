@@ -20,12 +20,6 @@ import (
 	"testing"
 )
 
-//func getAttachmentColor(level string) string {
-//                 "critical": "#FF0000",
-//                 "info":     "#E0E0D1",
-//                 "success":  "#00FF00",
-//                 "warning":  "#FF8000",
-
 func TestGetAttachmentColor(t *testing.T) {
 	t.Parallel()
 

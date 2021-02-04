@@ -42,12 +42,12 @@ func TestHandleError(t *testing.T) {
 	}
 
 	for _, tc := range cases {
+		var outbuf, errbuf bytes.Buffer
+
 		cs := []string{"-test.run=TestHandleError", "--"}
 		cs = append(cs, tc.format, tc.message)
 
-		var outbuf, errbuf bytes.Buffer
-
-		cmd := exec.Command(os.Args[0], "-test.run=HandleError")
+		cmd := exec.Command(os.Args[0], cs...)
 		cmd.Env = append(os.Environ(), "BE_HANDLE_ERROR=1")
 		cmd.Stdout = &outbuf
 		cmd.Stderr = &errbuf
