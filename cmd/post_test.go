@@ -123,7 +123,7 @@ func TestEnvVariables(t *testing.T) {
 
 	for _, tc := range envVariables {
 		v := viper.GetString(tc.vname)
-		if (v != tc.value) {
+		if v != tc.value {
 			t.Fatalf("For \"%s\" expected \"%s\" got \"%s\"",
 				tc.name, tc.value, v,
 			)
