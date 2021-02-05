@@ -25,7 +25,7 @@ import (
 
 func TestHandleError(t *testing.T) {
 	if os.Getenv("BE_HANDLE_ERROR") == "1" {
-		HandleError("%v", "this is an error message")
+		handleError("%v", "this is an error message")
 		return
 	}
 

@@ -41,12 +41,12 @@ var rootCmd = &cobra.Command{
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		HandleError("%v", err)
+		handleError("%v", err)
 	}
 }
 
 // handleError prints an error message to os.Stderr and termines the execution with an error code 1
-func HandleError(format string, a ...interface{}) {
+func handleError(format string, a ...interface{}) {
 	pFormat := fmt.Sprintf("Error: %v", format)
 	message := fmt.Sprintf(pFormat, a...)
 	fmt.Fprintln(os.Stderr, message)
@@ -68,7 +68,7 @@ func init() {
 
 	err := viper.BindPFlag("quiet", rootCmd.PersistentFlags().Lookup("quiet"))
 	if err != nil {
-		HandleError("unable to bind 'quiet' flag: %v", err)
+		handleError("unable to bind 'quiet' flag: %v", err)
 	}
 }
 
@@ -81,7 +81,7 @@ func initConfig() {
 		// Find home directory.
 		home, err := homedir.Dir()
 		if err != nil {
-			HandleError("%v", err)
+			handleError("%v", err)
 		}
 
 		// Search config in home directory with name ".go-mattermost-notify" (without extension).
@@ -100,10 +100,10 @@ func initConfig() {
 
 	for _, envVar := range envVars {
 		if err := viper.BindEnv(envVar); err != nil {
-			HandleError("%v", err)
+			handleError("%v", err)
 		}
 		if err := viper.BindPFlag(envVar, rootCmd.Flags().Lookup(envVar)); err != nil {
-			HandleError("%v", err)
+			handleError("%v", err)
 		}
 	}
 
