@@ -17,7 +17,12 @@
 package cmd
 
 import (
+	"io"
+	"os"
 	"testing"
+
+	mattermost "github.com/madrisan/go-mattermost-notify/mattemost"
+	"github.com/spf13/viper"
 )
 
 func TestGetAttachmentColor(t *testing.T) {
@@ -63,4 +68,65 @@ func TestGetAttachmentColor(t *testing.T) {
 			})
 		}
 	})
+}
+
+func TestEnvVariables(t *testing.T) {
+	oldMattermostGet := mattermost.Get
+	oldMattermostPost := mattermost.Post
+	defer func() {
+		mattermostGet = oldMattermostGet
+		mattermostPost = oldMattermostPost
+	}()
+
+	mattermostGet = func(endpoint string) (map[string]interface{}, error) {
+		return map[string]interface{}{}, nil
+	}
+	mattermostPost = func(endpoint string, payload io.Reader) (map[string]interface{}, error) {
+		return map[string]interface{}{}, nil
+	}
+
+	envVariables := []struct {
+		name  string
+		value string
+		vname string
+	}{
+		{
+			"MATTERMOST_URL",
+			"http://example.com/mattermost",
+			"url",
+		},
+		{
+			"MATTERMOST_ACCESS_TOKEN",
+			"2bff151e935e4017a5222076c6f77311",
+			"access-token",
+		},
+	}
+
+	for _, tc := range envVariables {
+		if err := os.Setenv(tc.name, tc.value); err != nil {
+			t.Skip("cannot set the environment variable", tc.name)
+			return
+		}
+	}
+
+	args := []string{
+		"post",
+		"--author", "that's me",
+		"--channel", "7trmbhd8xg9tmiagqfx1fzhhjo",
+		"--message", "this is a dumb text",
+		"--title", "testing viber",
+	}
+	rootCmd.SetArgs(args)
+	if err := rootCmd.Execute(); err != nil {
+		t.Fatalf("The rootCmd.Execute has failed: %s", err)
+	}
+
+	for _, tc := range envVariables {
+		v := viper.GetString(tc.vname)
+		if (v != tc.value) {
+			t.Fatalf("For \"%s\" expected \"%s\" got \"%s\"",
+				tc.name, tc.value, v,
+			)
+		}
+	}
 }

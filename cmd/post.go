@@ -30,6 +30,9 @@ import (
 var mattermostChannel, mattermostTeam string
 var messageAuthor, messageContent, messageLevel, messageTitle string
 
+var mattermostGet = mattermost.Get
+var mattermostPost = mattermost.Post
+
 // getAttachmentColor returns the HTLM color code to be used for the message assignment
 // or "#E0E0D1" if the given level is invalid.
 func getAttachmentColor(level string) string {
@@ -52,7 +55,7 @@ func getAttachmentColor(level string) string {
 func getUserID(username string) (string, error) {
 	if username == "" {
 		var found bool
-		response, err := mattermost.Get("/users/me")
+		response, err := mattermostGet("/users/me")
 		if err != nil {
 			return "", err
 		}
@@ -63,7 +66,7 @@ func getUserID(username string) (string, error) {
 	}
 
 	endpoint := fmt.Sprintf("/users/username/%s", username)
-	response, err := mattermost.Get(endpoint)
+	response, err := mattermostGet(endpoint)
 	if err != nil {
 		return "", err
 	}
@@ -114,7 +117,7 @@ Example:
 				handleError("%v", err)
 			}
 
-			response, err := mattermost.Post("/channels/direct", bytes.NewReader(payload))
+			response, err := mattermostPost("/channels/direct", bytes.NewReader(payload))
 			if err != nil {
 				handleError("%v", err)
 			}
@@ -160,7 +163,7 @@ Example:
 		if err != nil {
 			handleError("%v", err)
 		}
-		response, err := mattermost.Post("/posts", bytes.NewReader(payload))
+		response, err := mattermostPost("/posts", bytes.NewReader(payload))
 		if err != nil {
 			handleError("%v", err)
 		}
