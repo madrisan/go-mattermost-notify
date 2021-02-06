@@ -6,6 +6,8 @@
 # A simple Mattermost notifier written in Go
 
 A Go (golang) simple client for sending [Mattermost](https://mattermost.com/) posts via its REST API v4.
+This program makes use of the Go libraries `http` and `url` for interacting with a Mattermost server and
+[Cobra](https://cobra.dev/) coupled with [Viper](https://github.com/spf13/viper) to implement the CLI interface.
 
 ## Build
 
@@ -57,27 +59,36 @@ Global Flags:
   -u, --url string            Mattermost URL. The command-line value has precedence over the MATTERMOST_URL environment variable.
 ```
 
-## Dockerfile
+## Developers' corner
 
-A simple Dockerfile for creating a container providing `go-mattermost-notify` follows.
+Some extra actions that may be usefull to project developers.
 
+#### Run the Test Suite
+
+Just run in the top source folder:
 ```
-FROM golang:1.15.6-buster as compiler
+make test
+```
 
-WORKDIR /usr/local/src
+#### Generate Test Coverage Statistics
 
-ENV GOPATH /go
-RUN mkdir -p $GOPATH/src $GOPATH/bin \
-    && chmod -R 755 $GOPATH
-ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+Go to the top source folder and enter the command:
+```
+make cover
+```
 
-COPY go-mattermost-notify go-mattermost-notify
-RUN make -C go-mattermost-notify dev
+#### Style and Static Code Analyzers
 
-FROM alpine:3.13
+##### GolangCI-Lint
 
-WORKDIR /usr/local/bin
-COPY --from=compiler /go/bin/go-mattermost-notify go-mattermost-notify
+Run the `GolangCI-Lint` linters aggregator:
+```
+make lint
+```
 
-CMD ["./go-mattermost-notify"]
+##### Go Vet
+
+Run the Go source code static analysis tool `vet` to find any common errors:
+```
+make vet
 ```
