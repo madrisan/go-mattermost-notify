@@ -50,6 +50,12 @@ vet:
 			echo "and fix them if necessary before submitting the code for reviewal."; \
 		fi
 
+cover:
+	./scripts/coverage.sh
+
+cover-html:
+	./scripts/coverage.sh --html
+
 # lint runs vet plus a number of other checkers, it is more comprehensive, but louder
 lint: bootstrap
 	@$(GO_CMD) list -f '{{.Dir}}' ./... | grep -v /vendor/ \
