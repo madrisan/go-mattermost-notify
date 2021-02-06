@@ -14,7 +14,7 @@
   limitations under the License.
 */
 
-// Package mattermost implements the API v4 calls to Mattemost
+// Package mattermost implements the API v4 calls to Mattemost.
 package mattermost
 
 import (
@@ -29,7 +29,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// forgeAPIv4URL returns the Mattermost APIv4 URL for the given endpoint
+// forgeAPIv4URL returns the Mattermost APIv4 URL for the given endpoint.
 func forgeAPIv4URL(baseUrl, endpoint string) string {
 	var url = fmt.Sprintf("%s/api/v4/%s",
 		strings.TrimRight(baseUrl, "/"),
@@ -37,12 +37,12 @@ func forgeAPIv4URL(baseUrl, endpoint string) string {
 	return url
 }
 
-// forgeBearerAuthentication returns the string to be sent to Mattermost for a Bearer Authentication
+// forgeBearerAuthentication returns the string to be sent to Mattermost for a Bearer Authentication.
 func forgeBearerAuthentication(accessToken string) string {
 	return "Bearer " + accessToken
 }
 
-// getAccessToken returns the Mattermost token set at command-line or via the environment variable MATTERMOST_ACCESS_TOKEN
+// getAccessToken returns the Mattermost token set at command-line or via the environment variable MATTERMOST_ACCESS_TOKEN.
 func getAccessToken() (string, error) {
 	accessToken := viper.GetString("access-token")
 	if accessToken == "" {
@@ -51,7 +51,7 @@ func getAccessToken() (string, error) {
 	return accessToken, nil
 }
 
-// getUrl returns the Mattermost URL set at command-line or via the environment variable MATTERMOST_URL
+// getUrl returns the Mattermost URL set at command-line or via the environment variable MATTERMOST_URL.
 func getUrl() (string, error) {
 	baseUrl := viper.GetString("url")
 	if baseUrl == "" {
@@ -60,7 +60,7 @@ func getUrl() (string, error) {
 	return baseUrl, nil
 }
 
-// queryAPIv4 makes a query to Mattermost using its REST API v4
+// queryAPIv4 makes a query to Mattermost using its REST API v4.
 func queryAPIv4(method, endpoint string, payload io.Reader) (map[string]interface{}, error) {
 	baseUrl, err := getUrl()
 	if err != nil {
@@ -112,7 +112,7 @@ func queryAPIv4(method, endpoint string, payload io.Reader) (map[string]interfac
 	return data, nil
 }
 
-// Get makes a query of type GET to Mattermost
+// Get makes a query of type GET to Mattermost.
 func Get(endpoint string) (map[string]interface{}, error) {
 	response, err := queryAPIv4(http.MethodGet, endpoint, nil)
 	if err != nil {
@@ -122,7 +122,7 @@ func Get(endpoint string) (map[string]interface{}, error) {
 	return response, nil
 }
 
-// Post makes a query of type POST to Mattermost
+// Post makes a query of type POST to Mattermost.
 func Post(endpoint string, payload io.Reader) (map[string]interface{}, error) {
 	response, err := queryAPIv4(http.MethodPost, endpoint, payload)
 	if err != nil {

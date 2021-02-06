@@ -2,6 +2,7 @@
 
 ![Release Status](https://img.shields.io/badge/status-stable-brightgreen.svg)
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://spdx.org/licenses/Apache-2.0.html)
+[![Coverage](https://img.shields.io/badge/Go%20Coverage-46.7%25-green.svg?longCache=true&style=flat)](https://github.com/jpoles1/gopherbadger)
 [![Go Report Card](https://goreportcard.com/badge/github.com/madrisan/go-mattermost-notify)](https://goreportcard.com/report/github.com/madrisan/go-mattermost-notify)
 
 # A simple Mattermost notifier written in Go [![GoDoc](https://godoc.org/github.com/madrisan/go-mattermost-notify?status.png)](https://godoc.org/github.com/madrisan/go-mattermost-notify)

@@ -27,27 +27,52 @@ import (
 	"github.com/spf13/viper"
 )
 
-var mattermostChannel, mattermostTeam string
-var messageAuthor, messageContent, messageLevel, messageTitle string
+var (
+	// mattermostChannel contains the Mattermost Channel ID.
+	mattermostChannel string
+	// mattermostTeam contains the Mattermost Team.
+	mattermostTeam string
+	// messageAuthor contains the author of the Mattermost post to be sent.
+	messageAuthor string
+	// messageContent contains the text message of the Mattermost post.
+	messageContent string
+	// messageLevel defines the criticity of the post message.
+	// Can be "info" (the default), "success", "warning", or "critical".
+	messageLevel string
+	// messageTitle contains the title of the post message to be sent.
+	messageTitle string
+	// mattermostGet contains the pointer to the Get function in the mattermost package.
+	// It's used to easily mockup the Mattermost server in the unit tests.
+	mattermostGet = mattermost.Get
+	// mattermostPost contains the pointer to the Post function in the mattermost package.
+	// It's used to easily mockup the Mattermost server in the unit tests.
+	mattermostPost = mattermost.Post
+)
 
-var mattermostGet = mattermost.Get
-var mattermostPost = mattermost.Post
+// The HTML colors used in the post message attachment.
+const (
+	COLOR_CRITICAL = "#FF0000" // The color code for critical messages.
+	COLOR_INFO     = "#E0E0D1" // The color code for informational messages.
+	COLOR_SUCCESS  = "#00FF00" // The color code for successful messages.
+	COLOR_WARNING  = "#FF8000" // The color code for warning messages.
+	COLOR_DEFAULT  = "#E0E0D1" // The default color.
+)
 
 // getAttachmentColor returns the HTLM color code to be used for the message assignment
-// or "#E0E0D1" if the given level is invalid.
+// or COLOR_DEFAULT if the given level is invalid.
 func getAttachmentColor(level string) string {
 	var color = map[string]string{
-		"critical": "#FF0000",
-		"info":     "#E0E0D1",
-		"success":  "#00FF00",
-		"warning":  "#FF8000",
+		"critical": COLOR_CRITICAL,
+		"info":     COLOR_INFO,
+		"success":  COLOR_SUCCESS,
+		"warning":  COLOR_WARNING,
 	}
 
 	if c, found := color[level]; found {
 		return c
 	}
 
-	return color["info"]
+	return COLOR_DEFAULT
 }
 
 // getUserID returns the Mattemost ID associated to the given user
@@ -79,6 +104,7 @@ func getUserID(username string) (string, error) {
 	return id.(string), nil
 }
 
+// prettyPrint is used to pretty print the JSON output returned by Mattermost API.
 func prettyPrint(v interface{}) (err error) {
 	b, err := json.MarshalIndent(v, "", "    ")
 	if err == nil {
@@ -87,7 +113,7 @@ func prettyPrint(v interface{}) (err error) {
 	return
 }
 
-// postCmd represents the post command
+// postCmd represents the post CLI command.
 var postCmd = &cobra.Command{
 	Use:   "post",
 	Short: "Post a message to a Mattermost channel or user",
@@ -173,6 +199,7 @@ Example:
 	},
 }
 
+// init initializes the post command flags.
 func init() {
 	rootCmd.AddCommand(postCmd)
 

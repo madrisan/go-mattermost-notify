@@ -27,10 +27,16 @@ import (
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
-var mattermostURL, mattermostAccessToken string
+var (
+	// cfgFile contains the name of the local configuration file.
+	cfgFile string
+	// mattermostURL contains the Mattermost base URL.
+	mattermostURL string
+	// mattermostAccessToken contains the Mattermost Access Token.
+	mattermostAccessToken string
+)
 
-// rootCmd represents the base command when called without any subcommands
+// rootCmd represents the base command when called without any subcommands.
 var rootCmd = &cobra.Command{
 	Use:   "go-mattermost-notify",
 	Short: "Mattermost client in go",
@@ -45,7 +51,7 @@ func Execute() {
 	}
 }
 
-// handleError prints an error message to os.Stderr and termines the execution with an error code 1
+// handleError prints an error message to os.Stderr and termines the execution with an error code 1.
 func handleError(format string, a ...interface{}) {
 	pFormat := fmt.Sprintf("Error: %v", format)
 	message := fmt.Sprintf(pFormat, a...)
@@ -53,6 +59,7 @@ func handleError(format string, a ...interface{}) {
 	os.Exit(1)
 }
 
+// init initializes the persistent (global) flags.
 func init() {
 	cobra.OnInitialize(initConfig)
 
@@ -96,7 +103,7 @@ func initConfig() {
 
 	viper.SetEnvPrefix("mattermost")
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
-	viper.AutomaticEnv() // read in environment variables that match
+	viper.AutomaticEnv() // read in environment variables that match.
 
 	for _, envVar := range envVars {
 		if err := viper.BindEnv(envVar); err != nil {
