@@ -29,22 +29,51 @@ import (
 	"github.com/spf13/viper"
 )
 
-// queryAPIv4 makes a query to Mattermost using its REST API v4
-func queryAPIv4(method, endpoint string, payload io.Reader) (map[string]interface{}, error) {
-	baseUrl := viper.GetString("url")
-	if baseUrl == "" {
-		return nil, fmt.Errorf("the Mattermost URL has not been set")
-	}
-
-	accessToken := viper.GetString("access-token")
-	if accessToken == "" {
-		return nil, fmt.Errorf("the Mattermost Access Token has not been set")
-	}
-
-	var bearer = "Bearer " + accessToken
+// forgeAPIv4URL returns the Mattermost APIv4 URL for the given endpoint
+func forgeAPIv4URL(baseUrl, endpoint string) string {
 	var url = fmt.Sprintf("%s/api/v4/%s",
 		strings.TrimRight(baseUrl, "/"),
 		strings.TrimLeft(endpoint, "/"))
+	return url
+}
+
+// forgeBearerAuthentication returns the string to be sent to Mattermost for a Bearer Authentication
+func forgeBearerAuthentication(accessToken string) string {
+	return "Bearer " + accessToken
+}
+
+// getAccessToken returns the Mattermost token set at command-line or via the environment variable MATTERMOST_ACCESS_TOKEN
+func getAccessToken() (string, error) {
+	accessToken := viper.GetString("access-token")
+	if accessToken == "" {
+		return "", fmt.Errorf("the Mattermost Access Token has not been set")
+	}
+	return accessToken, nil
+}
+
+// getUrl returns the Mattermost URL set at command-line or via the environment variable MATTERMOST_URL
+func getUrl() (string, error) {
+	baseUrl := viper.GetString("url")
+	if baseUrl == "" {
+		return "", fmt.Errorf("the Mattermost URL has not been set")
+	}
+	return baseUrl, nil
+}
+
+// queryAPIv4 makes a query to Mattermost using its REST API v4
+func queryAPIv4(method, endpoint string, payload io.Reader) (map[string]interface{}, error) {
+	baseUrl, err := getUrl()
+	if err != nil {
+		return nil, err
+	}
+
+	accessToken, err := getAccessToken()
+	if err != nil {
+		return nil, err
+	}
+
+	var bearer = forgeBearerAuthentication(accessToken)
+	var url = forgeAPIv4URL(baseUrl, endpoint)
 
 	req, err := http.NewRequest(method, url, payload)
 	if err != nil {
