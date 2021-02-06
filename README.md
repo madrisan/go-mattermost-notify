@@ -1,6 +1,6 @@
 ![](images/mattermost_logo.png?raw=true)
 
-![Release Status](https://img.shields.io/badge/status-beta-yellow.svg)
+![Release Status](https://img.shields.io/badge/status-stable-brightgreen.svg)
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://spdx.org/licenses/Apache-2.0.html)
 
 # A simple Mattermost notifier written in Go
