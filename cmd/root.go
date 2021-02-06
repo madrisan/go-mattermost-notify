@@ -14,6 +14,7 @@
   limitations under the License.
 */
 
+// Package cmd implements the CLI interface using the Cobra and Viper libraries
 package cmd
 
 import (
