@@ -1,6 +1,6 @@
 package version
 
 func init() {
-	Version = "0.6.1"
-	VersionPrerelease = "beta"
+	Version = "0.7.0"
+	VersionPrerelease = ""
 }
