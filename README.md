@@ -5,7 +5,7 @@
 [![Coverage](https://img.shields.io/badge/Go%20Coverage-46.7%25-green.svg?longCache=true&style=flat)](https://github.com/jpoles1/gopherbadger)
 [![Go Report Card](https://goreportcard.com/badge/github.com/madrisan/go-mattermost-notify)](https://goreportcard.com/report/github.com/madrisan/go-mattermost-notify)
 
-# A simple Mattermost notifier written in Go [![Go Reference](https://pkg.go.dev/badge/go-mattermost-notify.svg)](https://pkg.go.dev/go-mattermost-notify)
+# A simple Mattermost notifier written in Go [![Go Reference](https://pkg.go.dev/badge/go-mattermost-notify.svg)](https://pkg.go.dev/github.com/madrisan/go-mattermost-notify)
 
 A Go (golang) simple client for sending [Mattermost](https://mattermost.com/) posts via its REST API v4.
 This program makes use of the Go libraries `http` and `url` for interacting with a Mattermost server and
