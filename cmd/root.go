@@ -14,7 +14,7 @@
   limitations under the License.
 */
 
-// Package cmd implements the CLI interface using the Cobra and Viper libraries
+// Package cmd implements the CLI interface using the Cobra and Viper libraries.
 package cmd
 
 import (
@@ -95,10 +95,11 @@ func initConfig() {
 		viper.AddConfigPath(home)
 		viper.SetConfigName(".go-mattermost-notify")
 	}
+	viper.SetConfigType("yaml")
 
 	var envVars = [...]string{
-		"url",
 		"access-token",
+		"url",
 	}
 
 	viper.SetEnvPrefix("mattermost")
@@ -115,7 +116,24 @@ func initConfig() {
 	}
 
 	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	if err := viper.ReadInConfig(); err != nil {
+		// It's okay if there isn't a config file
+		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+			handleError("%v", err)
+		}
+	} else {
+		// Using the config file: viper.ConfigFileUsed()
+		if viper.IsSet("mattermost.access-token") && !viper.IsSet("access-token") {
+			val := viper.Get("mattermost.access-token")
+			if err := rootCmd.Flags().Set("access-token", fmt.Sprintf("%v", val)); err != nil {
+				handleError("%v", err)
+			}
+		}
+		if viper.IsSet("mattermost.url") && !viper.IsSet("url") {
+			val := viper.Get("mattermost.url")
+			if err := rootCmd.Flags().Set("url", fmt.Sprintf("%v", val)); err != nil {
+				handleError("%v", err)
+			}
+		}
 	}
 }

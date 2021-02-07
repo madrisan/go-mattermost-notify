@@ -5,7 +5,7 @@
 [![Coverage](https://img.shields.io/badge/Go%20Coverage-46.7%25-green.svg?longCache=true&style=flat)](https://github.com/jpoles1/gopherbadger)
 [![Go Report Card](https://goreportcard.com/badge/github.com/madrisan/go-mattermost-notify)](https://goreportcard.com/report/github.com/madrisan/go-mattermost-notify)
 
-# A simple Mattermost notifier written in Go [![GoDoc](https://godoc.org/github.com/madrisan/go-mattermost-notify?status.png)](https://godoc.org/github.com/madrisan/go-mattermost-notify)
+# A simple Mattermost notifier written in Go [![Go Reference](https://pkg.go.dev/badge/go-mattermost-notify.svg)](https://pkg.go.dev/go-mattermost-notify)
 
 A Go (golang) simple client for sending [Mattermost](https://mattermost.com/) posts via its REST API v4.
 This program makes use of the Go libraries `http` and `url` for interacting with a Mattermost server and
@@ -35,12 +35,14 @@ make bin     # creates the binaries for all the supported OS and architectures
 
 ## Usage
 
+Use the `post` command of `go-mattermost-notify` to send a message to Mattermost.
 ```
 $ go-mattermost-notify post --help
 Post a message to a Mattermost channel or user using its REST APIv4 interface.
 
 Example:
-  go-mattermost-notify post rybfbdi9ojy8xxxjjxc88kh3me --author CI --title "Job Status" --message "The job \#BEEF has failed :bug:" --level=critical
+  post -c rybfbdi9ojy8xxxjjxc88kh3me -A CI -t "Job Status" -m "The job \#BEEF has failed :bug:" -l critical
+  post -c @alice -A CI -t "Job Status" -m "The job \#BEEF ended successfully :tada:" -l success
 
 Usage:
   go-mattermost-notify post [flags]
@@ -60,6 +62,22 @@ Global Flags:
   -q, --quiet                 quiet mode
   -u, --url string            Mattermost URL. The command-line value has precedence over the MATTERMOST_URL environment variable.
 ```
+
+The *access token* and the *url* can be set using different methods:
+ * At command-line (`--access-token` and `--url` respectively)
+ * By setting the environment variables `MATTERMOST_ACCESS_TOKEN` and `MATTERMOST_URL`
+ * By creating a yaml configuration file (by default `~/.go-mattermost-notify.yaml`) containing the lines:
+```
+mattermost:
+  access-token: <access-token>
+  url: <base URL of the Mattermost server>
+```
+
+The precedence order is: **flags > environment variables > configuration file**.
+
+### Example of the output
+
+![](images/mattermost_posts_example.png?raw=true)
 
 ## Developers' corner
 

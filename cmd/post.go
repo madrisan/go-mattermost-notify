@@ -120,7 +120,8 @@ var postCmd = &cobra.Command{
 	Long: `Post a message to a Mattermost channel or user using its REST APIv4 interface.
 
 Example:
-  post -c rybfbdi9ojy8xxxjjxc88kh3me -A CI -t "Job Status" -m "The job \#BEEF has failed :bug:" -l critical`,
+  post -c rybfbdi9ojy8xxxjjxc88kh3me -A CI -t "Job Status" -m "The job \#BEEF has failed :bug:" -l critical
+  post -c @alice -A CI -t "Job Status" -m "The job \#BEEF ended successfully :tada:" -l success`,
 	Run: func(cmd *cobra.Command, args []string) {
 		attachmentColor := getAttachmentColor(messageLevel)
 
