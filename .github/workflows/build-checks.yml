@@ -4,6 +4,7 @@ on:
   push:
     paths-ignore:
       - '**.md'
+      - 'images/**'
   pull_request:
     types: [assigned, edited, opened, synchronize, reopened]
 
