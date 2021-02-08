@@ -90,21 +90,38 @@ func getKV(response interface{}, key string) (string, error) {
 	return "", fmt.Errorf("unexpected response format from Mattermost")
 }
 
-// getUserID returns the Mattemost ID associated to the given user
-// of to the current user if no user is specified (empty string).
-func getUserID(username string) (string, error) {
-	if username == "" {
-		response, err := mattermostGet("/users/me")
-		if err != nil {
-			return "", err
-		}
-
-		username, err = getKV(response, "username")
-		if err != nil {
-			return "", err
-		}
+// getLoggedUsername returns the username of the logged Mattermost user.
+func getLoggedUsername() (string, error) {
+	response, err := mattermostGet("/users/me")
+	if err != nil {
+		return "", err
 	}
 
+	username, err := getKV(response, "username")
+	if err != nil {
+		return "", err
+	}
+
+	return username, nil
+}
+
+// getLoggedUserID returns the Mattermost ID of the logged user.
+func getLoggedUserID() (string, error) {
+	username, err := getLoggedUsername()
+	if err != nil {
+		return "", err
+	}
+
+	id, err := getUserID(username)
+	if err != nil {
+		return "", err
+	}
+
+	return id, nil
+}
+
+// getUserID returns the Mattemost ID associated to the given user.
+func getUserID(username string) (string, error) {
 	endpoint := fmt.Sprintf("/users/username/%s", username)
 	response, err := mattermostGet(endpoint)
 	if err != nil {
@@ -141,7 +158,7 @@ Example:
 		var mattermostChannelID string
 
 		if strings.HasPrefix(mattermostChannel, "@") {
-			userIDFrom, err := getUserID("")
+			userIDFrom, err := getLoggedUserID()
 			if err != nil {
 				handleError("%v", err)
 			}
