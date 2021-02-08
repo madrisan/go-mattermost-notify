@@ -34,7 +34,7 @@ Example:
   get /channels
   get /users/me`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if args == nil || len(args) == 0 {
+		if len(args) == 0 {
 			handleError("%v", "An endpoint must be specified in the command-line arguments")
 		}
 		response, err := mattermostGet(args[0])
