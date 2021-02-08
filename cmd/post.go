@@ -75,18 +75,33 @@ func getAttachmentColor(level string) string {
 	return COLOR_DEFAULT
 }
 
+// getKV returns the value of key in the JSON response data.
+func getKV(response interface{}, key string) (string, error) {
+	switch response.(type) {
+	case map[string]interface{}:
+		data := response.(map[string]interface{})
+		value, found := data[key].(string)
+		if !found {
+			return "", fmt.Errorf("no such key: \"%s\"", key)
+		}
+		return value, nil
+	}
+
+	return "", fmt.Errorf("unexpected response format from Mattermost")
+}
+
 // getUserID returns the Mattemost ID associated to the given user
 // of to the current user if no user is specified (empty string).
 func getUserID(username string) (string, error) {
 	if username == "" {
-		var found bool
 		response, err := mattermostGet("/users/me")
 		if err != nil {
 			return "", err
 		}
-		username, found = response["username"].(string)
-		if !found {
-			return "", fmt.Errorf("cannot get the Mattermost username of the current user")
+
+		username, err = getKV(response, "username")
+		if err != nil {
+			return "", err
 		}
 	}
 
@@ -95,13 +110,11 @@ func getUserID(username string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
-	id, found := response["id"]
-	if !found {
-		return "", fmt.Errorf("cannot get the Mattermost ID of the current user %s", username)
+	id, err := getKV(response, "id")
+	if err != nil {
+		return "", fmt.Errorf("cannot get the Mattermost ID of the current user %s: %v", username, err)
 	}
-
-	return id.(string), nil
+	return id, nil
 }
 
 // prettyPrint is used to pretty print the JSON output returned by Mattermost API.
@@ -138,7 +151,6 @@ Example:
 				handleError("%v", err)
 			}
 
-			var found bool
 			payload, err := json.Marshal([]string{userIDFrom, userIDTo})
 			if err != nil {
 				handleError("%v", err)
@@ -148,9 +160,10 @@ Example:
 			if err != nil {
 				handleError("%v", err)
 			}
-			mattermostChannelID, found = response["id"].(string)
-			if !found {
-				handleError("cannot get the Mattermost Channel ID")
+
+			mattermostChannelID, err = getKV(response, "id")
+			if err != nil {
+				handleError("cannot get the Mattermost direct channel ID")
 			}
 		} else {
 			mattermostChannelID = mattermostChannel

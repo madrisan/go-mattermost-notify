@@ -61,7 +61,7 @@ func getUrl() (string, error) {
 }
 
 // queryAPIv4 makes a query to Mattermost using its REST API v4.
-func queryAPIv4(method, endpoint string, payload io.Reader) (map[string]interface{}, error) {
+func queryAPIv4(method, endpoint string, payload io.Reader) (interface{}, error) {
 	baseUrl, err := getUrl()
 	if err != nil {
 		return nil, err
@@ -104,7 +104,7 @@ func queryAPIv4(method, endpoint string, payload io.Reader) (map[string]interfac
 		return nil, err
 	}
 
-	data := make(map[string]interface{})
+	var data interface{}
 	if err := json.Unmarshal([]byte(body), &data); err != nil {
 		return nil, err
 	}
@@ -113,7 +113,7 @@ func queryAPIv4(method, endpoint string, payload io.Reader) (map[string]interfac
 }
 
 // Get makes a query of type GET to Mattermost.
-func Get(endpoint string) (map[string]interface{}, error) {
+func Get(endpoint string) (interface{}, error) {
 	response, err := queryAPIv4(http.MethodGet, endpoint, nil)
 	if err != nil {
 		return nil, err
@@ -123,7 +123,7 @@ func Get(endpoint string) (map[string]interface{}, error) {
 }
 
 // Post makes a query of type POST to Mattermost.
-func Post(endpoint string, payload io.Reader) (map[string]interface{}, error) {
+func Post(endpoint string, payload io.Reader) (interface{}, error) {
 	response, err := queryAPIv4(http.MethodPost, endpoint, payload)
 	if err != nil {
 		return nil, err
