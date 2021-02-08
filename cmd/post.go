@@ -20,6 +20,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"os"
+	"reflect"
 	"strings"
 
 	mattermost "github.com/madrisan/go-mattermost-notify/mattemost"
@@ -87,7 +89,8 @@ func getKV(response interface{}, key string) (string, error) {
 		return value, nil
 	}
 
-	return "", fmt.Errorf("unexpected response format from Mattermost")
+	return "", fmt.Errorf("unexpected response format from Mattermost (%s)",
+		reflect.TypeOf(response))
 }
 
 // getLoggedUsername returns the username of the logged Mattermost user.
@@ -132,15 +135,6 @@ func getUserID(username string) (string, error) {
 		return "", fmt.Errorf("cannot get the Mattermost ID of the current user %s: %v", username, err)
 	}
 	return id, nil
-}
-
-// prettyPrint is used to pretty print the JSON output returned by Mattermost API.
-func prettyPrint(v interface{}) (err error) {
-	b, err := json.MarshalIndent(v, "", "    ")
-	if err == nil {
-		fmt.Println(string(b))
-	}
-	return
 }
 
 // postCmd represents the post CLI command.
@@ -225,7 +219,7 @@ Example:
 			handleError("%v", err)
 		}
 		if !viper.GetBool("quiet") {
-			prettyPrint(response)
+			mattermost.PrettyPrint(os.Stdout, response)
 		}
 	},
 }

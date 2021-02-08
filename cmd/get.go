@@ -17,6 +17,9 @@
 package cmd
 
 import (
+	"os"
+
+	mattermost "github.com/madrisan/go-mattermost-notify/mattemost"
 	"github.com/spf13/cobra"
 )
 
@@ -41,7 +44,7 @@ Example:
 		if err != nil {
 			handleError("%v", err)
 		}
-		prettyPrint(response)
+		mattermost.PrettyPrint(os.Stdout, response)
 	},
 }
 

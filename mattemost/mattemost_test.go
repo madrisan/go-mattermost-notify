@@ -14,11 +14,11 @@
   limitations under the License.
 */
 
-// func forgeAPIv4URL(baseUrl, endpoint string) string {
-
 package mattermost
 
 import (
+	"bytes"
+	"strings"
 	"testing"
 )
 
@@ -68,6 +68,45 @@ func TestForgeBearerAuthentication(t *testing.T) {
 			t.Error("For", accessToken,
 				"expected", shouldBe, "got", v,
 			)
+		}
+	})
+}
+
+func TestPrettyPrint(t *testing.T) {
+	t.Parallel()
+
+	cases := []struct {
+		dataType string
+		data     interface{}
+		shouldBe string
+	}{
+		{
+			"map",
+			map[string]string{"white": "#FFFFFF", "black": "#000000"},
+			"{\n  \"black\": \"#000000\",\n  \"white\": \"#FFFFFF\"\n}\n",
+		},
+		{
+			"array",
+			[]string{"Italy", "France", "Poland"},
+			"[\n  \"Italy\",\n  \"France\",\n  \"Poland\"\n]\n",
+		},
+	}
+
+	t.Run("pretty_print", func(t *testing.T) {
+		t.Parallel()
+
+		for _, tc := range cases {
+			t.Run(tc.dataType, func(t *testing.T) {
+				var outbuf bytes.Buffer
+				err := PrettyPrint(&outbuf, tc.data)
+				if err != nil {
+					t.Error("For", tc.dataType, "PrettyPrint has failed")
+				} else if strings.Compare(outbuf.String(), tc.shouldBe) != 0 {
+					t.Error("For", tc.dataType, "expected",
+						tc.shouldBe, "got", outbuf.String(),
+					)
+				}
+			})
 		}
 	})
 }

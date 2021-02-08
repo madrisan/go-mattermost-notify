@@ -19,6 +19,7 @@ package cmd
 import (
 	"io"
 	"os"
+	"strings"
 	"testing"
 
 	mattermost "github.com/madrisan/go-mattermost-notify/mattemost"
@@ -63,6 +64,44 @@ func TestGetAttachmentColor(t *testing.T) {
 				if v != tc.colorShouldBe {
 					t.Error("For", tc.level,
 						"expected", tc.colorShouldBe, "got", v,
+					)
+				}
+			})
+		}
+	})
+}
+
+func TestGetKV(t *testing.T) {
+	t.Parallel()
+
+	cases := []struct {
+		data     interface{}
+		key      string
+		shouldBe string
+	}{
+		{
+			map[string]interface{}{"white": "#FFFFFF", "black": "#000000"},
+			"white",
+			"#FFFFFF",
+		},
+		{
+			map[string]interface{}{"white": "#FFFFFF", "black": "#000000"},
+			"black",
+			"#000000",
+		},
+	}
+
+	t.Run("get_kv", func(t *testing.T) {
+		t.Parallel()
+
+		for _, tc := range cases {
+			t.Run(tc.key, func(t *testing.T) {
+				value, err := getKV(tc.data, tc.key)
+				if err != nil {
+					t.Error("For", tc.key, "getKV has failed:", err)
+				} else if strings.Compare(value, tc.shouldBe) != 0 {
+					t.Error("For", tc.key, "expected",
+						tc.shouldBe, "got", value,
 					)
 				}
 			})
