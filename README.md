@@ -1,4 +1,4 @@
-![](images/go-mattermost-notify-logo.png?raw=true)
+![go-mattermost-notify logo][logo]
 
 ![Release Status](https://img.shields.io/badge/status-stable-brightgreen.svg)
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://spdx.org/licenses/Apache-2.0.html)
@@ -34,6 +34,8 @@ make bin     # creates the binaries for all the supported OS and architectures
 ```
 
 ## Usage
+
+### Post Command
 
 Use the `post` command of `go-mattermost-notify` to send a message to Mattermost.
 ```
@@ -75,9 +77,43 @@ mattermost:
 
 The precedence order is: **flags > environment variables > configuration file**.
 
-### Example of the output
+#### Output in Mattermost
 
-![](images/mattermost_posts_example.png?raw=true)
+As an example we show the Mattermost messages related to the following two commands:
+```
+go-mattermost-notify post -c rybfbdi9ojy8xxxjjxc88kh3me -A CI -t "Job Status" -m "The job \#BEEF has failed :bug:" -l critical
+go-mattermost-notify post -c @alice -A CI -t "Job Status" -m "The job \#BEEF ended successfully :tada:" -l success
+```
+
+![notifications example in Mattermost][example_message]
+
+### Get Command
+
+The `get` command of `go-mattermost-notify` is mainly intended for debugging or for getting Mattemost configuration information.
+```
+$ go-mattermost-notify get --help
+Send a Get query to Mattermost using its REST APIv4 interface.
+
+See the Mattermost API documentation:
+  https://api.mattermost.com/
+
+Example:
+  get /bots
+  get /channels
+  get /users/me
+
+Usage:
+  go-mattermost-notify get [flags]
+
+Flags:
+  -h, --help   help for get
+
+Global Flags:
+  -a, --access-token string   Mattermost Access Token. The command-line value has precedence over the MATTERMOST_ACCESS_TOKEN environment variable.
+      --config string         config file (default is $HOME/.go-mattermost-notify.yaml)
+  -q, --quiet                 quiet mode
+  -u, --url string            Mattermost URL. The command-line value has precedence over the MATTERMOST_URL environment variable.
+```
 
 ## Developers' corner
 
@@ -112,3 +148,6 @@ Run the Go source code static analysis tool `vet` to find any common errors:
 ```
 make vet
 ```
+
+[logo]: images/go-mattermost-notify-logo.png?raw=true
+[example_message]: images/mattermost_posts_example.png?raw=true
