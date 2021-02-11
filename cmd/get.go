@@ -30,20 +30,19 @@ var getCmd = &cobra.Command{
 	Long: `Send a Get query to Mattermost using its REST APIv4 interface.
 
 See the Mattermost API documentation:
-  https://api.mattermost.com/
-
-Example:
-  get /bots
+  https://api.mattermost.com/`,
+	Example: `  get /bots
   get /channels
   get /users/me`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			handleError("%v", "An endpoint must be specified in the command-line arguments")
+			handleError("An endpoint must be specified in the command-line arguments")
 		}
 		response, err := mattermostGet(args[0])
 		if err != nil {
-			handleError("%v", err)
+			handleError(err)
 		}
+
 		mattermost.PrettyPrint(os.Stdout, response)
 	},
 }

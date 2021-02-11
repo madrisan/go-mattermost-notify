@@ -25,17 +25,15 @@ import (
 
 func TestHandleError(t *testing.T) {
 	if os.Getenv("BE_HANDLE_ERROR") == "1" {
-		handleError("%v", "this is an error message")
+		handleError("this is an error message")
 		return
 	}
 
 	cases := []struct {
-		format   string
 		message  string
 		shouldBe string
 	}{
 		{
-			"%v",
 			"this is an error message",
 			"Error: this is an error message\n",
 		},
@@ -45,7 +43,7 @@ func TestHandleError(t *testing.T) {
 		var outbuf, errbuf bytes.Buffer
 
 		cs := []string{"-test.run=TestHandleError", "--"}
-		cs = append(cs, tc.format, tc.message)
+		cs = append(cs, tc.message)
 
 		cmd := exec.Command(os.Args[0], cs...)
 		cmd.Env = append(os.Environ(), "BE_HANDLE_ERROR=1")

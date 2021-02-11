@@ -141,12 +141,10 @@ func getUserID(username string) (string, error) {
 var postCmd = &cobra.Command{
 	Use:   "post",
 	Short: "Post a message to a Mattermost channel or user",
-	Long: `Post a message to a Mattermost channel or user using its REST APIv4 interface.
-
-Example:
-  post -c rybfbdi9ojy8xxxjjxc88kh3me -A CI -t "Job Status" -m "The job \#BEEF has failed :bug:" -l critical
+	Long:  `Post a message to a Mattermost channel or user using its REST APIv4 interface.`,
+	Example: `  post -c rybfbdi9ojy8xxxjjxc88kh3me -A CI -t "Job Status" -m "The job \#BEEF has failed :bug:" -l critical
   post -c @alice -A CI -t "Job Status" -m "The job \#BEEF ended successfully :tada:" -l success`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		attachmentColor := getAttachmentColor(messageLevel)
 
 		var mattermostChannelID string
@@ -154,27 +152,27 @@ Example:
 		if strings.HasPrefix(mattermostChannel, "@") {
 			userIDFrom, err := getLoggedUserID()
 			if err != nil {
-				handleError("%v", err)
+				return err
 			}
 
 			userIDTo, err := getUserID(strings.TrimLeft(mattermostChannel, "@"))
 			if err != nil {
-				handleError("%v", err)
+				return err
 			}
 
 			payload, err := json.Marshal([]string{userIDFrom, userIDTo})
 			if err != nil {
-				handleError("%v", err)
+				return err
 			}
 
 			response, err := mattermostPost("/channels/direct", bytes.NewReader(payload))
 			if err != nil {
-				handleError("%v", err)
+				return err
 			}
 
 			mattermostChannelID, err = getKV(response, "id")
 			if err != nil {
-				handleError("cannot get the Mattermost direct channel ID")
+				return fmt.Errorf("cannot get the Mattermost direct channel ID %v", err)
 			}
 		} else {
 			mattermostChannelID = mattermostChannel
@@ -212,15 +210,17 @@ Example:
 
 		payload, err := json.Marshal(data)
 		if err != nil {
-			handleError("%v", err)
+			return err
 		}
 		response, err := mattermostPost("/posts", bytes.NewReader(payload))
 		if err != nil {
-			handleError("%v", err)
+			return err
 		}
 		if !viper.GetBool("quiet") {
 			mattermost.PrettyPrint(os.Stdout, response)
 		}
+
+		return nil
 	},
 }
 
@@ -249,7 +249,7 @@ func init() {
 
 	for _, requiredFlag := range requiredFlags {
 		if err := postCmd.MarkFlagRequired(requiredFlag); err != nil {
-			handleError("%v", err)
+			handleError(err)
 		}
 	}
 }
