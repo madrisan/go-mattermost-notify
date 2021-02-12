@@ -17,6 +17,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	mattermost "github.com/madrisan/go-mattermost-notify/mattemost"
@@ -34,16 +35,17 @@ See the Mattermost API documentation:
 	Example: `  get /bots
   get /channels
   get /users/me`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			handleError("An endpoint must be specified in the command-line arguments")
+			return fmt.Errorf("An endpoint must be specified in the command-line arguments")
 		}
 		response, err := mattermostGet(args[0])
 		if err != nil {
-			handleError(err)
+			return err
 		}
 
 		mattermost.PrettyPrint(os.Stdout, response)
+		return nil
 	},
 }
 
