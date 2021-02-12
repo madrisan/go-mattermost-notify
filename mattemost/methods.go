@@ -23,42 +23,8 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"strings"
 	"time"
-
-	"github.com/spf13/viper"
 )
-
-// forgeAPIv4URL returns the Mattermost APIv4 URL for the given endpoint.
-func forgeAPIv4URL(baseUrl, endpoint string) string {
-	var url = fmt.Sprintf("%s/api/v4/%s",
-		strings.TrimRight(baseUrl, "/"),
-		strings.TrimLeft(endpoint, "/"))
-	return url
-}
-
-// forgeBearerAuthentication returns the string to be sent to Mattermost for a Bearer Authentication.
-func forgeBearerAuthentication(accessToken string) string {
-	return "Bearer " + accessToken
-}
-
-// getAccessToken returns the Mattermost token set at command-line or via the environment variable MATTERMOST_ACCESS_TOKEN.
-func getAccessToken() (string, error) {
-	accessToken := viper.GetString("access-token")
-	if accessToken == "" {
-		return "", fmt.Errorf("the Mattermost Access Token has not been set")
-	}
-	return accessToken, nil
-}
-
-// getUrl returns the Mattermost URL set at command-line or via the environment variable MATTERMOST_URL.
-func getUrl() (string, error) {
-	baseUrl := viper.GetString("url")
-	if baseUrl == "" {
-		return "", fmt.Errorf("the Mattermost URL has not been set")
-	}
-	return baseUrl, nil
-}
 
 // queryAPIv4 makes a query to Mattermost using its REST API v4.
 func queryAPIv4(method, endpoint string, payload io.Reader) (interface{}, error) {
@@ -130,58 +96,4 @@ func Post(endpoint string, payload io.Reader) (interface{}, error) {
 	}
 
 	return response, nil
-}
-
-// CreateMsgPayload forges the payload containing the message to be posted to Mattermost
-func CreateMsgPayload(
-	attachmentColor,
-	mattermostChannelID,
-	messageAuthor, messageContent, messageTitle string) ([]byte, error) {
-
-	type MsgAttachment struct {
-		Author string `json:"author_name"`
-		Color  string `json:"color"`
-		Title  string `json:"title"`
-		Text   string `json:"text"`
-	}
-
-	type MsgProperties struct {
-		Attachments []MsgAttachment `json:"attachments"`
-	}
-
-	// MsgPayload is used to create the JSON payload used when posting a message to Mattermost.
-	type MsgPayload struct {
-		ID         string        `json:"channel_id"`
-		Properties MsgProperties `json:"props"`
-	}
-
-	data := MsgPayload{
-		ID: mattermostChannelID,
-		Properties: MsgProperties{
-			[]MsgAttachment{
-				{
-					Author: messageAuthor,
-					Color:  attachmentColor,
-					Title:  messageTitle,
-					Text:   messageContent,
-				},
-			},
-		},
-	}
-
-	payload, err := json.Marshal(data)
-	if err != nil {
-		return nil, err
-	}
-
-	return payload, nil
-}
-
-// PrettyPrint prints the result of a Mattermost query in a pretty JSON format.
-func PrettyPrint(w io.Writer, v interface{}) (err error) {
-	b, err := json.MarshalIndent(v, "", "  ")
-	if err == nil {
-		fmt.Fprintln(w, string(b))
-	}
-	return
 }
