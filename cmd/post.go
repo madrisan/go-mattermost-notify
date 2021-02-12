@@ -178,40 +178,14 @@ var postCmd = &cobra.Command{
 			mattermostChannelID = mattermostChannel
 		}
 
-		type Attachment struct {
-			Author string `json:"author_name"`
-			Color  string `json:"color"`
-			Title  string `json:"title"`
-			Text   string `json:"text"`
-		}
-
-		type Properties struct {
-			Attachments []Attachment `json:"attachments"`
-		}
-
-		type Payload struct {
-			ID         string     `json:"channel_id"`
-			Properties Properties `json:"props"`
-		}
-
-		data := Payload{
-			ID: mattermostChannelID,
-			Properties: Properties{
-				[]Attachment{
-					{
-						Author: messageAuthor,
-						Color:  attachmentColor,
-						Title:  messageTitle,
-						Text:   messageContent,
-					},
-				},
-			},
-		}
-
-		payload, err := json.Marshal(data)
+		payload, err := mattermost.CreateMsgPayload(
+			attachmentColor,
+			mattermostChannelID,
+			messageAuthor, messageContent, messageTitle)
 		if err != nil {
 			return err
 		}
+
 		response, err := mattermostPost("/posts", bytes.NewReader(payload))
 		if err != nil {
 			return err

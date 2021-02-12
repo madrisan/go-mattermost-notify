@@ -132,6 +132,51 @@ func Post(endpoint string, payload io.Reader) (interface{}, error) {
 	return response, nil
 }
 
+// CreateMsgPayload forges the payload containing the message to be posted to Mattermost
+func CreateMsgPayload(
+	attachmentColor,
+	mattermostChannelID,
+	messageAuthor, messageContent, messageTitle string) ([]byte, error) {
+
+	type MsgAttachment struct {
+		Author string `json:"author_name"`
+		Color  string `json:"color"`
+		Title  string `json:"title"`
+		Text   string `json:"text"`
+	}
+
+	type MsgProperties struct {
+		Attachments []MsgAttachment `json:"attachments"`
+	}
+
+	// MsgPayload is used to create the JSON payload used when posting a message to Mattermost.
+	type MsgPayload struct {
+		ID         string        `json:"channel_id"`
+		Properties MsgProperties `json:"props"`
+	}
+
+	data := MsgPayload{
+		ID: mattermostChannelID,
+		Properties: MsgProperties{
+			[]MsgAttachment{
+				{
+					Author: messageAuthor,
+					Color:  attachmentColor,
+					Title:  messageTitle,
+					Text:   messageContent,
+				},
+			},
+		},
+	}
+
+	payload, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return payload, nil
+}
+
 // PrettyPrint prints the result of a Mattermost query in a pretty JSON format.
 func PrettyPrint(w io.Writer, v interface{}) (err error) {
 	b, err := json.MarshalIndent(v, "", "  ")
