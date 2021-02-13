@@ -107,6 +107,22 @@ func TestGetKV(t *testing.T) {
 			})
 		}
 	})
+
+	t.Run("get_kv_not_found", func(t *testing.T) {
+		data := map[string]interface{}{"white": "#FFFFFF", "black": "#000000"}
+		_, err := getKV(data, "yellow")
+		if err == nil {
+			t.Error("getKV should return an error for non existing keys")
+		}
+	})
+
+	t.Run("get_kv_not_a_map", func(t *testing.T) {
+		data := []string{"white", "black"}
+		_, err := getKV(data, "white")
+		if err == nil {
+			t.Error("getKV should return an error for non map[strings] data")
+		}
+	})
 }
 
 func TestEnvVariables(t *testing.T) {

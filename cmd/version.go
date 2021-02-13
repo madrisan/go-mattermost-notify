@@ -31,13 +31,12 @@ var versionCmd = &cobra.Command{
 	Short: "Print the version number",
 	Long:  `Print the program and name version information.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		ex, err := os.Executable()
+		processExecutable, err := os.Executable()
+		checkErr(err)
+
 		verInfo := version.GetVersion()
 		version := verInfo.FullVersionNumber(true)
-		if err != nil {
-			panic(err)
-		}
-		fmt.Printf("%s v%s\n", filepath.Base(ex), version)
+		fmt.Printf("%s v%s\n", filepath.Base(processExecutable), version)
 	},
 }
 
