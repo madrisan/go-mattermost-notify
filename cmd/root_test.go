@@ -24,17 +24,17 @@ import (
 	"testing"
 )
 
-func TestHandleError(t *testing.T) {
+func TestCheckErr(t *testing.T) {
 	testErrMsg := "this is an error message"
 	shouldBe := fmt.Sprintln("Error:", testErrMsg)
 
 	if os.Getenv("GO_WANT_HELPER_PROCESS") == "1" {
-		handleError(testErrMsg)
+		checkErr(testErrMsg)
 	}
 
 	var outbuf, errbuf bytes.Buffer
 
-	cs := []string{"-test.run=TestHandleError", "--"}
+	cs := []string{"-test.run=TestCheckErr", "--"}
 
 	cmd := exec.Command(os.Args[0], cs...)
 	cmd.Env = append(os.Environ(), "GO_WANT_HELPER_PROCESS=1")

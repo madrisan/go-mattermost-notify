@@ -222,8 +222,7 @@ func init() {
 	}
 
 	for _, requiredFlag := range requiredFlags {
-		if err := postCmd.MarkFlagRequired(requiredFlag); err != nil {
-			handleError(err)
-		}
+		err := postCmd.MarkFlagRequired(requiredFlag)
+		checkErr(err)
 	}
 }

@@ -51,10 +51,12 @@ func Execute() {
 	}
 }
 
-// handleError prints an error message to os.Stderr and termines the execution with an error code 1.
-func handleError(a ...interface{}) {
-	fmt.Fprintf(os.Stderr, "Error: %v\n", a...)
-	os.Exit(1)
+// checkErr prints the msg with the prefix 'Error:' and exits with error code 1. If the msg is nil, it does nothing.
+func checkErr(msg interface{}) {
+	if msg != nil {
+		fmt.Fprintln(os.Stderr, "Error:", msg)
+		os.Exit(1)
+	}
 }
 
 // init initializes the persistent (global) flags.
@@ -73,7 +75,7 @@ func init() {
 
 	err := viper.BindPFlag("quiet", rootCmd.PersistentFlags().Lookup("quiet"))
 	if err != nil {
-		handleError("unable to bind 'quiet' flag:", err)
+		checkErr(fmt.Sprintf("unable to bind 'quiet' flag: %v", err))
 	}
 }
 
@@ -86,9 +88,8 @@ func setConfigFile() {
 	} else {
 		// Find home directory.
 		home, err := homedir.Dir()
-		if err != nil {
-			handleError(err)
-		}
+		checkErr(err)
+
 		// Search config in home directory with name ".go-mattermost-notify" (without extension).
 		viper.AddConfigPath(home)
 		viper.SetConfigName(".go-mattermost-notify")
@@ -111,12 +112,11 @@ func initConfig() {
 	viper.AutomaticEnv() // read in environment variables that match.
 
 	for _, envVar := range envVars {
-		if err := viper.BindEnv(envVar); err != nil {
-			handleError(err)
-		}
-		if err := viper.BindPFlag(envVar, rootCmd.Flags().Lookup(envVar)); err != nil {
-			handleError(err)
-		}
+		err := viper.BindEnv(envVar)
+		checkErr(err)
+
+		err = viper.BindPFlag(envVar, rootCmd.Flags().Lookup(envVar))
+		checkErr(err)
 	}
 
 	// If a config file is found, read it in.
@@ -128,15 +128,13 @@ func initConfig() {
 		// Using the config file: viper.ConfigFileUsed()
 		if viper.IsSet("mattermost.access-token") && !viper.IsSet("access-token") {
 			val := viper.Get("mattermost.access-token")
-			if err := rootCmd.Flags().Set("access-token", fmt.Sprintf("%v", val)); err != nil {
-				handleError(err)
-			}
+			err := rootCmd.Flags().Set("access-token", fmt.Sprintf("%v", val))
+			checkErr(err)
 		}
 		if viper.IsSet("mattermost.url") && !viper.IsSet("url") {
 			val := viper.Get("mattermost.url")
-			if err := rootCmd.Flags().Set("url", fmt.Sprintf("%v", val)); err != nil {
-				handleError(err)
-			}
+			err := rootCmd.Flags().Set("url", fmt.Sprintf("%v", val))
+			checkErr(err)
 		}
 	}
 }
