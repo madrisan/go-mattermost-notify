@@ -154,4 +154,4 @@ make vet
 ```
 
 [logo]: images/go-mattermost-notify-logo.png?raw=true
-[example_message]: images/mattermost_posts_example.png?raw=true
+[example_message]: images/mattermost_post_example.png?raw=true
