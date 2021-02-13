@@ -112,6 +112,7 @@ func TestGetKV(t *testing.T) {
 func TestEnvVariables(t *testing.T) {
 	oldMattermostGet := mattermost.Get
 	oldMattermostPost := mattermost.Post
+
 	defer func() {
 		mattermostGet = oldMattermostGet
 		mattermostPost = oldMattermostPost
@@ -155,9 +156,10 @@ func TestEnvVariables(t *testing.T) {
 		"--message", "this is a dumb text",
 		"--title", "testing viber",
 	}
+
 	rootCmd.SetArgs(args)
 	if err := rootCmd.Execute(); err != nil {
-		t.Fatalf("The rootCmd.Execute has failed: %s", err)
+		t.Fatalf("The rootCmd.Execute function has failed: %s", err)
 	}
 
 	for _, tc := range envVariables {

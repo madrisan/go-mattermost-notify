@@ -77,8 +77,9 @@ func init() {
 	}
 }
 
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
+// setConfigFile set the configuration file using the data provided at command-line
+// or set a default configuration file (~/.go-mattermost-notify.yaml) when not specified.
+func setConfigFile() {
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
@@ -88,17 +89,22 @@ func initConfig() {
 		if err != nil {
 			handleError(err)
 		}
-
 		// Search config in home directory with name ".go-mattermost-notify" (without extension).
 		viper.AddConfigPath(home)
 		viper.SetConfigName(".go-mattermost-notify")
 	}
-	viper.SetConfigType("yaml")
 
+	viper.SetConfigType("yaml")
+}
+
+// initConfig reads in config file and ENV variables if set.
+func initConfig() {
 	var envVars = [...]string{
 		"access-token",
 		"url",
 	}
+
+	setConfigFile()
 
 	viper.SetEnvPrefix("mattermost")
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
@@ -115,9 +121,8 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err != nil {
-		// It's okay if there isn't a config file
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			handleError(err)
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			// Config file not found; ignore error
 		}
 	} else {
 		// Using the config file: viper.ConfigFileUsed()

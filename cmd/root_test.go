@@ -18,49 +18,38 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"os/exec"
 	"testing"
 )
 
 func TestHandleError(t *testing.T) {
-	if os.Getenv("BE_HANDLE_ERROR") == "1" {
-		handleError("this is an error message")
+	testErrMsg := "this is an error message"
+	shouldBe := fmt.Sprintln("Error:", testErrMsg)
+
+	if os.Getenv("GO_WANT_HELPER_PROCESS") == "1" {
+		handleError(testErrMsg)
+	}
+
+	var outbuf, errbuf bytes.Buffer
+
+	cs := []string{"-test.run=TestHandleError", "--"}
+
+	cmd := exec.Command(os.Args[0], cs...)
+	cmd.Env = append(os.Environ(), "GO_WANT_HELPER_PROCESS=1")
+	cmd.Stdout = &outbuf
+	cmd.Stderr = &errbuf
+
+	err := cmd.Run()
+	if e, ok := err.(*exec.ExitError); ok && !e.Success() {
+		v := errbuf.String()
+		if v != shouldBe {
+			t.Fatalf("For \"%s\" expected \"%s\" got \"%s\"",
+				testErrMsg, shouldBe, v,
+			)
+		}
 		return
 	}
-
-	cases := []struct {
-		message  string
-		shouldBe string
-	}{
-		{
-			"this is an error message",
-			"Error: this is an error message\n",
-		},
-	}
-
-	for _, tc := range cases {
-		var outbuf, errbuf bytes.Buffer
-
-		cs := []string{"-test.run=TestHandleError", "--"}
-		cs = append(cs, tc.message)
-
-		cmd := exec.Command(os.Args[0], cs...)
-		cmd.Env = append(os.Environ(), "BE_HANDLE_ERROR=1")
-		cmd.Stdout = &outbuf
-		cmd.Stderr = &errbuf
-
-		err := cmd.Run()
-
-		if e, ok := err.(*exec.ExitError); ok && !e.Success() {
-			v := errbuf.String()
-			if v != tc.shouldBe {
-				t.Fatalf("For \"%s\" expected \"%s\" got \"%s\"",
-					tc.message, tc.shouldBe, v,
-				)
-			}
-			return
-		}
-		t.Fatalf("process ran with err %v, want exit status 1", err)
-	}
+	t.Fatalf("process ran with err %v, want exit status 1", err)
 }
