@@ -79,11 +79,7 @@ The precedence order is: **flags > environment variables > configuration file**.
 
 #### Output in Mattermost
 
-As an example we show the Mattermost messages related to the following two commands:
-```
-go-mattermost-notify post -c rybfbdi9ojy8xxxjjxc88kh3me -A CI -t "Job Status" -m "The job \#BEEF has failed :bug:" -l critical
-go-mattermost-notify post -c @alice -A CI -t "Job Status" -m "The job \#BEEF ended successfully :tada:" -l success
-```
+As an example we show a Mattermost message using some markdown features (text modifiers, emoticons, and a clickable URL):
 
 ![notifications example in Mattermost][example_message]
 
