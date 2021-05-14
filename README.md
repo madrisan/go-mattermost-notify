@@ -59,6 +59,15 @@ If you need to add an extra certificate that is signed by a custom CA (to fix th
 ```
 Than rebuild the container image.
 
+Now you can load the image created by the previous command with the following command.
+```
+podman run --rm -it localhost/go-mattermost-notify:latest [add-the-required-options]
+```
+If you need to debug some issues, you can overwrite the entrypoint with the busybox shell:
+```
+podman run --entrypoint=sh --rm -it localhost/go-mattermost-notify:latest
+```
+
 ## Usage
 
 ### Post Command
