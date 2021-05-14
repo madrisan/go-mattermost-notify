@@ -33,6 +33,32 @@ make dev     # creates the binary for testing the application locally
 make bin     # creates the binaries for all the supported OS and architectures
 ```
 
+### Create a container
+```
+podman build -t go-mattermost-notify:latest -f Containerfile .
+```
+or if you prefer, use `docker` or `nerdctl` instead of *podman*.
+
+If you need to add an extra certificate that is signed by a custom CA (to fix the error message "x509: certificate signed by unknown authority"), do create a file named `additional-ca-cert-bundle.crt` at the root of the project and apply this patch:
+```diff
+--- a/Containerfile       2021-05-15 00:03:46.372638891 +0200
++++ b/Containerfile       2021-05-15 00:09:08.588941105 +0200
+@@ -32,9 +32,9 @@
+ # do create a file # named "additional-ca-cert-bundle.crt" at the root of th
+ # project and comment out the following lines.
+ 
+-#COPY --from=0 /go/src/github.com/madrisan/go-mattermost-notify/additional-ca-cert-bundle.crt \
+-#              /additional-ca-cert-bundle.crt
+-#RUN cat /additional-ca-cert-bundle.crt >> /ca-certificates.crt
++COPY --from=0 /go/src/github.com/madrisan/go-mattermost-notify/additional-ca-cert-bundle.crt \
++              /additional-ca-cert-bundle.crt
++RUN cat /additional-ca-cert-bundle.crt >> /ca-certificates.crt
+ 
+ # Final step
+ 
+```
+Than rebuild the container image.
+
 ## Usage
 
 ### Post Command

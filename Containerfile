@@ -1,0 +1,53 @@
+# Copyright 2021 Davide Madrisan <davide.madrisan@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+FROM golang:1.15
+
+WORKDIR /go/src/github.com/madrisan/go-mattermost-notify
+
+COPY . .
+RUN make dev
+
+# Generate latest ca-certificates
+
+FROM debian:latest AS certs
+
+RUN \
+  apt update && \
+  apt install -y ca-certificates && \
+  cat /etc/ssl/certs/* > /ca-certificates.crt
+
+# If you need to add an extra certificate that is signed by a custom CA,
+# do create a file # named "additional-ca-cert-bundle.crt" at the root of th
+# project and comment out the following lines.
+
+#COPY --from=0 /go/src/github.com/madrisan/go-mattermost-notify/additional-ca-cert-bundle.crt \
+#              /additional-ca-cert-bundle.crt
+#RUN cat /additional-ca-cert-bundle.crt >> /ca-certificates.crt
+
+# Final step
+
+FROM scratch
+COPY --from=busybox:stable /bin /busybox
+
+COPY --from=0 /go/src/github.com/madrisan/go-mattermost-notify/bin/go-mattermost-notify \
+              /usr/local/bin/go-mattermost-notify
+COPY --from=busybox:stable /bin /busybox
+COPY --from=certs /ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+
+ENV PATH /usr/local/bin:/busybox
+
+WORKDIR /workspace
+
+ENTRYPOINT ["/usr/local/bin/go-mattermost-notify"]
