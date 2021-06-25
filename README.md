@@ -16,7 +16,7 @@ This program makes use of the Go libraries `http` and `url` for interacting with
 ### Using go get
 
 ```
-ENV GO111MODULE=on
+export GO111MODULE=on
 [ "$GOPATH" ] || export GOPATH="$HOME/go"
 go get -u github.com/madrisan/go-mattermost-notify
 
@@ -36,29 +36,14 @@ make bin     # creates the binaries for all the supported OS and architectures
 
 ### Create a container
 ```
-podman build -t go-mattermost-notify:latest -f Containerfile .
+podman build -t go-mattermost-notify:latest -f deploy/Containerfile .
 ```
 or if you prefer, use `docker` or `nerdctl` instead of *podman*.
 
-If you need to add an extra certificate that is signed by a custom CA (to fix the error message "x509: certificate signed by unknown authority"), do create a file named `additional-ca-cert-bundle.crt` at the root of the project and apply this patch:
-```diff
---- a/Containerfile       2021-05-15 00:03:46.372638891 +0200
-+++ b/Containerfile       2021-05-15 00:09:08.588941105 +0200
-@@ -32,9 +32,9 @@
- # do create a file # named "additional-ca-cert-bundle.crt" at the root of th
- # project and comment out the following lines.
- 
--#COPY --from=0 /go/src/github.com/madrisan/go-mattermost-notify/additional-ca-cert-bundle.crt \
--#              /additional-ca-cert-bundle.crt
--#RUN cat /additional-ca-cert-bundle.crt >> /ca-certificates.crt
-+COPY --from=0 /go/src/github.com/madrisan/go-mattermost-notify/additional-ca-cert-bundle.crt \
-+              /additional-ca-cert-bundle.crt
-+RUN cat /additional-ca-cert-bundle.crt >> /ca-certificates.crt
- 
- # Final step
- 
+If you need to add an extra certificate that is signed by a custom CA (to fix the error message `x509: certificate signed by unknown authority`), do create a file named `additional-ca-cert-bundle.crt` at the root of the project sources and choose the docker file `deploy/Containerfile.additional_ca` instead.
 ```
-Than rebuild the container image.
+podman build -t go-mattermost-notify:latest -f deploy/Containerfile.additional_ca .
+```
 
 Now you can load the image created by the previous command with the following command.
 ```

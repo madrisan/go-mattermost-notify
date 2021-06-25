@@ -28,14 +28,6 @@ RUN \
   apt install -y ca-certificates && \
   cat /etc/ssl/certs/* > /ca-certificates.crt
 
-# If you need to add an extra certificate that is signed by a custom CA,
-# do create a file # named "additional-ca-cert-bundle.crt" at the root of th
-# project and comment out the following lines.
-
-#COPY --from=0 /go/src/github.com/madrisan/go-mattermost-notify/additional-ca-cert-bundle.crt \
-#              /additional-ca-cert-bundle.crt
-#RUN cat /additional-ca-cert-bundle.crt >> /ca-certificates.crt
-
 # Final step
 
 FROM scratch
