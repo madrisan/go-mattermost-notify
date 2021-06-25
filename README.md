@@ -16,6 +16,7 @@ This program makes use of the Go libraries `http` and `url` for interacting with
 ### Using go get
 
 ```
+ENV GO111MODULE=on
 [ "$GOPATH" ] || export GOPATH="$HOME/go"
 go get -u github.com/madrisan/go-mattermost-notify
 
