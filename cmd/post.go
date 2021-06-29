@@ -208,7 +208,7 @@ func init() {
 		"channel", "c", "", "Mattermost channel ID or username. Example: rybfbdi9ojy8xxxjjxc88kh3me or @alice")
 	postCmd.Flags().StringVarP(&mattermostTeam, "team", "T", "", "the Mattermost team")
 	postCmd.Flags().StringVarP(&messageLevel,
-		"level", "l", "info", "criticity level. Can be info (default), success, warning, or critical")
+		"level", "l", "info", "criticity level. Can be info, success, warning, or critical")
 	postCmd.Flags().StringVarP(&messageContent,
 		"message", "m", "", "the (markdown-formatted) message to send to the Mattermost channel")
 	postCmd.Flags().StringVarP(&messageTitle,

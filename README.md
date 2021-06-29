@@ -74,7 +74,7 @@ Flags:
   -A, --author string    author of the message
   -c, --channel string   Mattermost channel ID or username. Example: rybfbdi9ojy8xxxjjxc88kh3me or @alice
   -h, --help             help for post
-  -l, --level string     criticity level. Can be info (default), success, warning, or critical (default "info")
+  -l, --level string     criticity level. Can be info, success, warning, or critical (default "info")
   -m, --message string   the (markdown-formatted) message to send to the Mattermost channel
   -T, --team string      the Mattermost team
   -t, --title string     the title that will precede the text message
