@@ -11,6 +11,15 @@ A Go (golang) simple client for sending [Mattermost](https://mattermost.com/) po
 This program makes use of the Go libraries `http` and `url` for interacting with a Mattermost server and
 [Cobra](https://cobra.dev/) coupled with [Viper](https://github.com/spf13/viper) to implement the CLI interface.
 
+## Official Docker Image
+
+A docker image is available in Docker Hub: [madrisan/mattermost-notify](https://hub.docker.com/r/madrisan/mattermost-notify)
+
+### How to pull the Docker Image
+```
+docker pull madrisan/mattermost-notify
+```
+
 ## Build
 
 ### Using go get
