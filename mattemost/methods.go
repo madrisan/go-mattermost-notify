@@ -23,11 +23,12 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"time"
+
+	"github.com/madrisan/go-mattermost-notify/config"
 )
 
 // queryAPIv4 makes a query to Mattermost using its REST API v4.
-func queryAPIv4(method, endpoint string, payload io.Reader) (interface{}, error) {
+func queryAPIv4(method, endpoint string, payload io.Reader, opts config.Options) (interface{}, error) {
 	baseUrl, err := getUrl()
 	if err != nil {
 		return nil, err
@@ -49,7 +50,7 @@ func queryAPIv4(method, endpoint string, payload io.Reader) (interface{}, error)
 	req.Header.Add("Accept", "application/json")
 
 	client := &http.Client{
-		Timeout: time.Second * 10,
+		Timeout: opts.ConnectionTimeout,
 	}
 	response, err := client.Do(req)
 	if err != nil {
@@ -80,7 +81,8 @@ func queryAPIv4(method, endpoint string, payload io.Reader) (interface{}, error)
 
 // Get makes a query of type GET to Mattermost.
 func Get(endpoint string) (interface{}, error) {
-	response, err := queryAPIv4(http.MethodGet, endpoint, nil)
+	var opts = config.Options{}
+	response, err := queryAPIv4(http.MethodGet, endpoint, nil, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -89,8 +91,8 @@ func Get(endpoint string) (interface{}, error) {
 }
 
 // Post makes a query of type POST to Mattermost.
-func Post(endpoint string, payload io.Reader) (interface{}, error) {
-	response, err := queryAPIv4(http.MethodPost, endpoint, payload)
+func Post(endpoint string, payload io.Reader, opts config.Options) (interface{}, error) {
+	response, err := queryAPIv4(http.MethodPost, endpoint, payload, opts)
 	if err != nil {
 		return nil, err
 	}

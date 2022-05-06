@@ -23,15 +23,20 @@ import (
 	"os"
 	"reflect"
 	"strings"
+	"time"
 
 	mattermost "github.com/madrisan/go-mattermost-notify/mattemost"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/madrisan/go-mattermost-notify/config"
 )
 
 var (
 	// mattermostChannel contains the Mattermost Channel ID.
 	mattermostChannel string
+	// mattermostConnectionTimeout defines the maximum time in seconds allowed for Mattermost connections.
+	mattermostConnectionTimeout time.Duration
 	// mattermostTeam contains the Mattermost Team.
 	mattermostTeam string
 	// messageAuthor contains the author of the Mattermost post to be sent.
@@ -143,11 +148,14 @@ var postCmd = &cobra.Command{
 	Short: "Post a message to a Mattermost channel or user",
 	Long:  `Post a message to a Mattermost channel or user using its REST APIv4 interface.`,
 	Example: `  post -c rybfbdi9ojy8xxxjjxc88kh3me -A CI -t "Job Status" -m "The job \#BEEF has failed :bug:" -l critical
-  post -c @alice -A CI -t "Job Status" -m "The job \#BEEF ended successfully :tada:" -l success`,
+  post -c @alice -A CI -t "Job Status" -m "The job \#BEEF ended successfully :tada:" -l success -s 3s`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		attachmentColor := getAttachmentColor(messageLevel)
 
 		var mattermostChannelID string
+		var opts = config.Options{
+			ConnectionTimeout: mattermostConnectionTimeout,
+		}
 
 		if strings.HasPrefix(mattermostChannel, "@") {
 			userIDFrom, err := getLoggedUserID()
@@ -165,7 +173,7 @@ var postCmd = &cobra.Command{
 				return err
 			}
 
-			response, err := mattermostPost("/channels/direct", bytes.NewReader(payload))
+			response, err := mattermostPost("/channels/direct", bytes.NewReader(payload), opts)
 			if err != nil {
 				return err
 			}
@@ -186,7 +194,7 @@ var postCmd = &cobra.Command{
 			return err
 		}
 
-		response, err := mattermostPost("/posts", bytes.NewReader(payload))
+		response, err := mattermostPost("/posts", bytes.NewReader(payload), opts)
 		if err != nil {
 			return err
 		}
@@ -211,6 +219,8 @@ func init() {
 		"level", "l", "info", "criticity level. Can be info, success, warning, or critical")
 	postCmd.Flags().StringVarP(&messageContent,
 		"message", "m", "", "the (markdown-formatted) message to send to the Mattermost channel")
+	postCmd.Flags().DurationVarP(&mattermostConnectionTimeout,
+		"timeout", "s", 10*time.Second, "the maximum time in seconds allowed for a Mattermost connection")
 	postCmd.Flags().StringVarP(&messageTitle,
 		"title", "t", "", "the title that will precede the text message")
 

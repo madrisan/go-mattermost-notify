@@ -22,6 +22,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/madrisan/go-mattermost-notify/config"
 	mattermost "github.com/madrisan/go-mattermost-notify/mattemost"
 	"github.com/spf13/viper"
 )
@@ -137,7 +138,7 @@ func TestEnvVariables(t *testing.T) {
 	mattermostGet = func(endpoint string) (interface{}, error) {
 		return map[string]interface{}{}, nil
 	}
-	mattermostPost = func(endpoint string, payload io.Reader) (interface{}, error) {
+	mattermostPost = func(endpoint string, payload io.Reader, opts config.Options) (interface{}, error) {
 		return map[string]interface{}{}, nil
 	}
 
