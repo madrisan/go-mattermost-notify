@@ -29,7 +29,7 @@ import (
 
 // queryAPIv4 makes a query to Mattermost using its REST API v4.
 func queryAPIv4(method, endpoint string, payload io.Reader, opts config.Options) (interface{}, error) {
-	baseUrl, err := getUrl()
+	baseURL, err := getURL()
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func queryAPIv4(method, endpoint string, payload io.Reader, opts config.Options)
 	}
 
 	var bearer = forgeBearerAuthentication(accessToken)
-	var url = forgeAPIv4URL(baseUrl, endpoint)
+	var url = forgeAPIv4URL(baseURL, endpoint)
 
 	req, err := http.NewRequest(method, url, payload)
 	if err != nil {

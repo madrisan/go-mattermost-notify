@@ -27,9 +27,9 @@ import (
 )
 
 // forgeAPIv4URL returns the Mattermost APIv4 URL for the given endpoint.
-func forgeAPIv4URL(baseUrl, endpoint string) string {
+func forgeAPIv4URL(baseURL, endpoint string) string {
 	var url = fmt.Sprintf("%s/api/v4/%s",
-		strings.TrimRight(baseUrl, "/"),
+		strings.TrimRight(baseURL, "/"),
 		strings.TrimLeft(endpoint, "/"))
 	return url
 }
@@ -49,12 +49,12 @@ func getAccessToken() (string, error) {
 }
 
 // getUrl returns the Mattermost URL set at command-line or via the environment variable MATTERMOST_URL.
-func getUrl() (string, error) {
-	baseUrl := viper.GetString("url")
-	if baseUrl == "" {
+func getURL() (string, error) {
+	baseURL := viper.GetString("url")
+	if baseURL == "" {
 		return "", fmt.Errorf("the Mattermost URL has not been set")
 	}
-	return baseUrl, nil
+	return baseURL, nil
 }
 
 // CreateMsgPayload forges the payload containing the message to be posted to Mattermost

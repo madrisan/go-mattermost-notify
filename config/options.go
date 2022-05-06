@@ -16,7 +16,9 @@
 
 package config
 
-import "time"
+import (
+	"time"
+)
 
 // Options are all the options related to Mattermost posts, set by command line arguments.
 type Options struct {

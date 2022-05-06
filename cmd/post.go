@@ -58,28 +58,28 @@ var (
 
 // The HTML colors used in the post message attachment.
 const (
-	COLOR_CRITICAL = "#FF0000" // The color code for critical messages.
-	COLOR_INFO     = "#E0E0D1" // The color code for informational messages.
-	COLOR_SUCCESS  = "#00FF00" // The color code for successful messages.
-	COLOR_WARNING  = "#FF8000" // The color code for warning messages.
-	COLOR_DEFAULT  = "#E0E0D1" // The default color.
+	colorCritical = "#FF0000" // The color code for critical messages.
+	colorInfo     = "#E0E0D1" // The color code for informational messages.
+	colorSuccess  = "#00FF00" // The color code for successful messages.
+	colorWarning  = "#FF8000" // The color code for warning messages.
+	colorDefault  = "#E0E0D1" // The default color.
 )
 
 // getAttachmentColor returns the HTLM color code to be used for the message assignment
 // or COLOR_DEFAULT if the given level is invalid.
 func getAttachmentColor(level string) string {
 	var color = map[string]string{
-		"critical": COLOR_CRITICAL,
-		"info":     COLOR_INFO,
-		"success":  COLOR_SUCCESS,
-		"warning":  COLOR_WARNING,
+		"critical": colorCritical,
+		"info":     colorInfo,
+		"success":  colorSuccess,
+		"warning":  colorWarning,
 	}
 
 	if c, found := color[level]; found {
 		return c
 	}
 
-	return COLOR_DEFAULT
+	return colorDefault
 }
 
 // getKV returns the value of key in the JSON response data.

@@ -36,23 +36,23 @@ func TestGetAttachmentColor(t *testing.T) {
 	}{
 		{
 			"critical",
-			COLOR_CRITICAL,
+			colorCritical,
 		},
 		{
 			"info",
-			COLOR_INFO,
+			colorInfo,
 		},
 		{
 			"success",
-			COLOR_SUCCESS,
+			colorSuccess,
 		},
 		{
 			"warning",
-			COLOR_WARNING,
+			colorWarning,
 		},
 		{
 			"unknown",
-			COLOR_DEFAULT,
+			colorDefault,
 		},
 	}
 

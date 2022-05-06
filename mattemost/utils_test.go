@@ -100,7 +100,7 @@ func TestForgeAPIv4URL(t *testing.T) {
 	t.Parallel()
 
 	cases := []struct {
-		baseUrl     string
+		baseURL     string
 		endpoint    string
 		urlShouldBe string
 	}{
@@ -121,9 +121,9 @@ func TestForgeAPIv4URL(t *testing.T) {
 
 		for _, tc := range cases {
 			t.Run(tc.endpoint, func(t *testing.T) {
-				v := forgeAPIv4URL(tc.baseUrl, tc.endpoint)
+				v := forgeAPIv4URL(tc.baseURL, tc.endpoint)
 				if v != tc.urlShouldBe {
-					t.Error("For", tc.baseUrl, "and", tc.endpoint,
+					t.Error("For", tc.baseURL, "and", tc.endpoint,
 						"expected", tc.urlShouldBe, "got", v,
 					)
 				}
