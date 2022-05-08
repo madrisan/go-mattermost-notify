@@ -18,6 +18,7 @@
 package mattermost
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -49,8 +50,15 @@ func queryAPIv4(method, endpoint string, payload io.Reader, opts config.Options)
 	req.Header.Add("Authorization", bearer)
 	req.Header.Add("Accept", "application/json")
 
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: opts.SkipTLSVerify,
+		},
+	}
+
 	client := &http.Client{
-		Timeout: opts.ConnectionTimeout,
+		Timeout:   opts.ConnectionTimeout,
+		Transport: tr,
 	}
 	response, err := client.Do(req)
 	if err != nil {

@@ -37,6 +37,8 @@ var (
 	mattermostChannel string
 	// mattermostConnectionTimeout defines the maximum time in seconds allowed for Mattermost connections.
 	mattermostConnectionTimeout time.Duration
+	// mattermostSkipTLSVerify tells if the SSL/TLS certificate check must be ignored or not.
+	mattermostSkipTLSVerify bool
 	// mattermostTeam contains the Mattermost Team.
 	mattermostTeam string
 	// messageAuthor contains the author of the Mattermost post to be sent.
@@ -155,6 +157,7 @@ var postCmd = &cobra.Command{
 		var mattermostChannelID string
 		var opts = config.Options{
 			ConnectionTimeout: mattermostConnectionTimeout,
+			SkipTLSVerify:     mattermostSkipTLSVerify,
 		}
 
 		if strings.HasPrefix(mattermostChannel, "@") {
@@ -214,11 +217,13 @@ func init() {
 		"author", "A", "", "author of the message")
 	postCmd.Flags().StringVarP(&mattermostChannel,
 		"channel", "c", "", "Mattermost channel ID or username. Example: rybfbdi9ojy8xxxjjxc88kh3me or @alice")
-	postCmd.Flags().StringVarP(&mattermostTeam, "team", "T", "", "the Mattermost team")
+	postCmd.Flags().BoolVarP(&mattermostSkipTLSVerify,
+		"insecure", "i", false, "ignore SSL/TLS certificate check")
 	postCmd.Flags().StringVarP(&messageLevel,
 		"level", "l", "info", "criticity level. Can be info, success, warning, or critical")
 	postCmd.Flags().StringVarP(&messageContent,
 		"message", "m", "", "the (markdown-formatted) message to send to the Mattermost channel")
+	postCmd.Flags().StringVarP(&mattermostTeam, "team", "T", "", "the Mattermost team")
 	postCmd.Flags().DurationVarP(&mattermostConnectionTimeout,
 		"timeout", "s", 10*time.Second, "the maximum time in seconds allowed for a Mattermost connection")
 	postCmd.Flags().StringVarP(&messageTitle,

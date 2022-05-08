@@ -1,5 +1,5 @@
 GO_CMD?=go
-GO_VERSION_MIN=1.15.3
+GO_VERSION_MIN=1.16.15
 CGO_ENABLED?=0
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v pb.go | grep -v vendor)
 

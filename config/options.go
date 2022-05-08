@@ -23,4 +23,5 @@ import (
 // Options are all the options related to Mattermost posts, set by command line arguments.
 type Options struct {
 	ConnectionTimeout time.Duration
+	SkipTLSVerify     bool
 }
