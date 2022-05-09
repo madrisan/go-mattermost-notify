@@ -162,6 +162,11 @@ Run the `GolangCI-Lint` linters aggregator:
 ```
 make lint
 ```
+You may need to run the following command before:
+```
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.45.2
+```
+to locally install the binary `golangci-lint`.
 
 ##### Go Vet
 
