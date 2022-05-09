@@ -23,15 +23,22 @@ import (
 	"os"
 	"reflect"
 	"strings"
+	"time"
 
 	mattermost "github.com/madrisan/go-mattermost-notify/mattemost"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/madrisan/go-mattermost-notify/config"
 )
 
 var (
 	// mattermostChannel contains the Mattermost Channel ID.
 	mattermostChannel string
+	// mattermostConnectionTimeout defines the maximum time in seconds allowed for Mattermost connections.
+	mattermostConnectionTimeout time.Duration
+	// mattermostSkipTLSVerify tells if the SSL/TLS certificate check must be ignored or not.
+	mattermostSkipTLSVerify bool
 	// mattermostTeam contains the Mattermost Team.
 	mattermostTeam string
 	// messageAuthor contains the author of the Mattermost post to be sent.
@@ -53,28 +60,28 @@ var (
 
 // The HTML colors used in the post message attachment.
 const (
-	COLOR_CRITICAL = "#FF0000" // The color code for critical messages.
-	COLOR_INFO     = "#E0E0D1" // The color code for informational messages.
-	COLOR_SUCCESS  = "#00FF00" // The color code for successful messages.
-	COLOR_WARNING  = "#FF8000" // The color code for warning messages.
-	COLOR_DEFAULT  = "#E0E0D1" // The default color.
+	colorCritical = "#FF0000" // The color code for critical messages.
+	colorInfo     = "#E0E0D1" // The color code for informational messages.
+	colorSuccess  = "#00FF00" // The color code for successful messages.
+	colorWarning  = "#FF8000" // The color code for warning messages.
+	colorDefault  = "#E0E0D1" // The default color.
 )
 
 // getAttachmentColor returns the HTLM color code to be used for the message assignment
 // or COLOR_DEFAULT if the given level is invalid.
 func getAttachmentColor(level string) string {
 	var color = map[string]string{
-		"critical": COLOR_CRITICAL,
-		"info":     COLOR_INFO,
-		"success":  COLOR_SUCCESS,
-		"warning":  COLOR_WARNING,
+		"critical": colorCritical,
+		"info":     colorInfo,
+		"success":  colorSuccess,
+		"warning":  colorWarning,
 	}
 
 	if c, found := color[level]; found {
 		return c
 	}
 
-	return COLOR_DEFAULT
+	return colorDefault
 }
 
 // getKV returns the value of key in the JSON response data.
@@ -143,11 +150,15 @@ var postCmd = &cobra.Command{
 	Short: "Post a message to a Mattermost channel or user",
 	Long:  `Post a message to a Mattermost channel or user using its REST APIv4 interface.`,
 	Example: `  post -c rybfbdi9ojy8xxxjjxc88kh3me -A CI -t "Job Status" -m "The job \#BEEF has failed :bug:" -l critical
-  post -c @alice -A CI -t "Job Status" -m "The job \#BEEF ended successfully :tada:" -l success`,
+  post -c @alice -A CI -t "Job Status" -m "The job \#BEEF ended successfully :tada:" -l success -s 3s`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		attachmentColor := getAttachmentColor(messageLevel)
 
 		var mattermostChannelID string
+		var opts = config.Options{
+			ConnectionTimeout: mattermostConnectionTimeout,
+			SkipTLSVerify:     mattermostSkipTLSVerify,
+		}
 
 		if strings.HasPrefix(mattermostChannel, "@") {
 			userIDFrom, err := getLoggedUserID()
@@ -165,7 +176,7 @@ var postCmd = &cobra.Command{
 				return err
 			}
 
-			response, err := mattermostPost("/channels/direct", bytes.NewReader(payload))
+			response, err := mattermostPost("/channels/direct", bytes.NewReader(payload), opts)
 			if err != nil {
 				return err
 			}
@@ -186,7 +197,7 @@ var postCmd = &cobra.Command{
 			return err
 		}
 
-		response, err := mattermostPost("/posts", bytes.NewReader(payload))
+		response, err := mattermostPost("/posts", bytes.NewReader(payload), opts)
 		if err != nil {
 			return err
 		}
@@ -206,11 +217,15 @@ func init() {
 		"author", "A", "", "author of the message")
 	postCmd.Flags().StringVarP(&mattermostChannel,
 		"channel", "c", "", "Mattermost channel ID or username. Example: rybfbdi9ojy8xxxjjxc88kh3me or @alice")
-	postCmd.Flags().StringVarP(&mattermostTeam, "team", "T", "", "the Mattermost team")
+	postCmd.Flags().BoolVarP(&mattermostSkipTLSVerify,
+		"insecure", "i", false, "ignore SSL/TLS certificate check")
 	postCmd.Flags().StringVarP(&messageLevel,
 		"level", "l", "info", "criticity level. Can be info, success, warning, or critical")
 	postCmd.Flags().StringVarP(&messageContent,
 		"message", "m", "", "the (markdown-formatted) message to send to the Mattermost channel")
+	postCmd.Flags().StringVarP(&mattermostTeam, "team", "T", "", "the Mattermost team")
+	postCmd.Flags().DurationVarP(&mattermostConnectionTimeout,
+		"timeout", "s", 10*time.Second, "the maximum time in seconds allowed for a Mattermost connection")
 	postCmd.Flags().StringVarP(&messageTitle,
 		"title", "t", "", "the title that will precede the text message")
 

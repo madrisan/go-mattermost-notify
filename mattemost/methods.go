@@ -18,17 +18,19 @@
 package mattermost
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
-	"time"
+
+	"github.com/madrisan/go-mattermost-notify/config"
 )
 
 // queryAPIv4 makes a query to Mattermost using its REST API v4.
-func queryAPIv4(method, endpoint string, payload io.Reader) (interface{}, error) {
-	baseUrl, err := getUrl()
+func queryAPIv4(method, endpoint string, payload io.Reader, opts config.Options) (interface{}, error) {
+	baseURL, err := getURL()
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +41,7 @@ func queryAPIv4(method, endpoint string, payload io.Reader) (interface{}, error)
 	}
 
 	var bearer = forgeBearerAuthentication(accessToken)
-	var url = forgeAPIv4URL(baseUrl, endpoint)
+	var url = forgeAPIv4URL(baseURL, endpoint)
 
 	req, err := http.NewRequest(method, url, payload)
 	if err != nil {
@@ -48,8 +50,15 @@ func queryAPIv4(method, endpoint string, payload io.Reader) (interface{}, error)
 	req.Header.Add("Authorization", bearer)
 	req.Header.Add("Accept", "application/json")
 
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: opts.SkipTLSVerify,
+		},
+	}
+
 	client := &http.Client{
-		Timeout: time.Second * 10,
+		Timeout:   opts.ConnectionTimeout,
+		Transport: tr,
 	}
 	response, err := client.Do(req)
 	if err != nil {
@@ -80,7 +89,8 @@ func queryAPIv4(method, endpoint string, payload io.Reader) (interface{}, error)
 
 // Get makes a query of type GET to Mattermost.
 func Get(endpoint string) (interface{}, error) {
-	response, err := queryAPIv4(http.MethodGet, endpoint, nil)
+	var opts = config.Options{}
+	response, err := queryAPIv4(http.MethodGet, endpoint, nil, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -89,8 +99,8 @@ func Get(endpoint string) (interface{}, error) {
 }
 
 // Post makes a query of type POST to Mattermost.
-func Post(endpoint string, payload io.Reader) (interface{}, error) {
-	response, err := queryAPIv4(http.MethodPost, endpoint, payload)
+func Post(endpoint string, payload io.Reader, opts config.Options) (interface{}, error) {
+	response, err := queryAPIv4(http.MethodPost, endpoint, payload, opts)
 	if err != nil {
 		return nil, err
 	}
