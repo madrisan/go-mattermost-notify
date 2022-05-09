@@ -25,7 +25,7 @@ import (
 	"strings"
 	"time"
 
-	mattermost "github.com/madrisan/go-mattermost-notify/mattemost"
+	mattermost "github.com/madrisan/go-mattermost-notify/mattermost"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 

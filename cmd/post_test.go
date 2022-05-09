@@ -23,7 +23,7 @@ import (
 	"testing"
 
 	"github.com/madrisan/go-mattermost-notify/config"
-	mattermost "github.com/madrisan/go-mattermost-notify/mattemost"
+	mattermost "github.com/madrisan/go-mattermost-notify/mattermost"
 	"github.com/spf13/viper"
 )
 
