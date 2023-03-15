@@ -18,8 +18,7 @@
 //
 // Source code and other details for the project are available at GitHub:
 //
-//   https://github.com/madrisan/go-mattermost-notify
-//
+//	https://github.com/madrisan/go-mattermost-notify
 package main
 
 import "github.com/madrisan/go-mattermost-notify/cmd"
