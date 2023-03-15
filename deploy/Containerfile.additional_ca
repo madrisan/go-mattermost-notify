@@ -1,4 +1,4 @@
-# Copyright 2021-2022 Davide Madrisan <davide.madrisan@gmail.com>
+# Copyright 2021-2023 Davide Madrisan <davide.madrisan@gmail.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.16
+FROM golang:1.17
 
 WORKDIR /go/src/github.com/madrisan/go-mattermost-notify
 
