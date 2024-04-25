@@ -1,5 +1,5 @@
 /*
-  Copyright 2021-2022 Davide Madrisan <davide.madrisan@gmail.com>
+  Copyright 2021-2024 Davide Madrisan <d.madrisan@proton.me>
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.

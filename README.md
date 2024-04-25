@@ -133,6 +133,7 @@ Usage:
 
 Flags:
   -h, --help   help for get
+  -i, --insecure   ignore SSL/TLS certificate check
 
 Global Flags:
   -a, --access-token string   Mattermost Access Token. The command-line value has precedence over the MATTERMOST_ACCESS_TOKEN environment variable.

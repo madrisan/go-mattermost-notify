@@ -1,5 +1,5 @@
 /*
-  Copyright 2021-2022 Davide Madrisan <davide.madrisan@gmail.com>
+  Copyright 2021-2024 Davide Madrisan <d.madrisan@proton.me>
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"github.com/madrisan/go-mattermost-notify/version"
 	"github.com/spf13/cobra"
@@ -36,7 +37,11 @@ var versionCmd = &cobra.Command{
 
 		verInfo := version.GetVersion()
 		version := verInfo.FullVersionNumber(true)
-		fmt.Printf("%s v%s\n", filepath.Base(processExecutable), version)
+		fmt.Printf("%s v%s (%s/%s %s)\n",
+			filepath.Base(processExecutable),
+			version,
+			runtime.GOOS, runtime.GOARCH,
+			runtime.Version())
 	},
 }
 
