@@ -102,7 +102,12 @@ func getKV(response interface{}, key string) (string, error) {
 
 // getLoggedUsername returns the username of the logged Mattermost user.
 func getLoggedUsername() (string, error) {
-	response, err := mattermostGet("/users/me")
+	var opts = config.Options{
+		ConnectionTimeout: mattermostConnectionTimeout,
+		SkipTLSVerify:     mattermostSkipTLSVerify,
+	}
+
+	response, err := mattermostGet("/users/me", opts)
 	if err != nil {
 		return "", err
 	}
@@ -132,8 +137,13 @@ func getLoggedUserID() (string, error) {
 
 // getUserID returns the Mattemost ID associated to the given user.
 func getUserID(username string) (string, error) {
+	var opts = config.Options{
+		ConnectionTimeout: mattermostConnectionTimeout,
+		SkipTLSVerify:     mattermostSkipTLSVerify,
+	}
+
 	endpoint := fmt.Sprintf("/users/username/%s", username)
-	response, err := mattermostGet(endpoint)
+	response, err := mattermostGet(endpoint, opts)
 	if err != nil {
 		return "", err
 	}
@@ -158,6 +168,10 @@ var postCmd = &cobra.Command{
 		var opts = config.Options{
 			ConnectionTimeout: mattermostConnectionTimeout,
 			SkipTLSVerify:     mattermostSkipTLSVerify,
+		}
+
+		if opts.SkipTLSVerify {
+			fmt.Fprintln(os.Stderr, os.Args[0], "Warning: SSL/TLS certificate check is disabled!")
 		}
 
 		if strings.HasPrefix(mattermostChannel, "@") {

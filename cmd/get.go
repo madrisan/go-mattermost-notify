@@ -22,6 +22,8 @@ import (
 
 	mattermost "github.com/madrisan/go-mattermost-notify/mattermost"
 	"github.com/spf13/cobra"
+
+	"github.com/madrisan/go-mattermost-notify/config"
 )
 
 // getCmd represents the get CLI command.
@@ -39,7 +41,11 @@ See the Mattermost API documentation:
 		if len(args) == 0 {
 			return fmt.Errorf("An endpoint must be specified in the command-line arguments")
 		}
-		response, err := mattermostGet(args[0])
+		var opts = config.Options{
+			ConnectionTimeout: mattermostConnectionTimeout,
+			SkipTLSVerify:     mattermostSkipTLSVerify,
+		}
+		response, err := mattermostGet(args[0], opts)
 		if err != nil {
 			return err
 		}
@@ -52,4 +58,6 @@ See the Mattermost API documentation:
 // init initializes the post command flags.
 func init() {
 	rootCmd.AddCommand(getCmd)
+	getCmd.Flags().BoolVarP(&mattermostSkipTLSVerify,
+		"insecure", "i", false, "ignore SSL/TLS certificate check")
 }

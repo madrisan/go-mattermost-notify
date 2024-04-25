@@ -88,8 +88,7 @@ func queryAPIv4(method, endpoint string, payload io.Reader, opts config.Options)
 }
 
 // Get makes a query of type GET to Mattermost.
-func Get(endpoint string) (interface{}, error) {
-	var opts = config.Options{}
+func Get(endpoint string, opts config.Options) (interface{}, error) {
 	response, err := queryAPIv4(http.MethodGet, endpoint, nil, opts)
 	if err != nil {
 		return nil, err
