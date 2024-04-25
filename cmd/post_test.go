@@ -135,7 +135,7 @@ func TestEnvVariables(t *testing.T) {
 		mattermostPost = oldMattermostPost
 	}()
 
-	mattermostGet = func(endpoint string) (interface{}, error) {
+	mattermostGet = func(endpoint string, opts config.Options) (interface{}, error) {
 		return map[string]interface{}{}, nil
 	}
 	mattermostPost = func(endpoint string, payload io.Reader, opts config.Options) (interface{}, error) {
