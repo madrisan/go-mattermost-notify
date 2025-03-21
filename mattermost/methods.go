@@ -49,6 +49,7 @@ func queryAPIv4(method, endpoint string, payload io.Reader, opts config.Options)
 	}
 	req.Header.Add("Authorization", bearer)
 	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json; charset=utf8")
 
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{
