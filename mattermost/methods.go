@@ -22,7 +22,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/madrisan/go-mattermost-notify/config"
@@ -75,7 +74,7 @@ func queryAPIv4(method, endpoint string, payload io.Reader, opts config.Options)
 	// Read body
 	defer response.Body.Close()
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
