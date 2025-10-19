@@ -13,12 +13,8 @@ require (
 
 require (
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
-	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
-	github.com/golangci/golangci-lint v1.45.2 // indirect
-	github.com/hashicorp/go-version v1.7.0 // indirect
+	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/mitchellh/gox v1.0.1 // indirect
-	github.com/mitchellh/iochan v1.0.0 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
 	github.com/sagikazarmark/locafero v0.8.0 // indirect
