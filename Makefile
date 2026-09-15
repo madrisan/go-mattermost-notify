@@ -5,7 +5,7 @@ GOFMT_FILES?=$$(find . -name '*.go' | grep -v pb.go | grep -v vendor)
 
 EXTERNAL_TOOLS_CI=\
 	github.com/mitchellh/gox@v1.0.1 \
-	github.com/golangci/golangci-lint@v1.64.8
+	github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.13.2
 
 TEST?=$$($(GO_CMD) list ./... | grep -v /vendor/ | grep -v /integ)
 TEST_TIMEOUT?=5m
@@ -30,7 +30,7 @@ test: bootstrap
 bootstrap:
 	@for tool in  $(EXTERNAL_TOOLS_CI) ; do \
 		echo "Installing/Updating $$tool" ; \
-		GO111MODULE=on $(GO_CMD) get -u $$tool; \
+		GO111MODULE=on $(GO_CMD) install $$tool; \
 	done
 	@sh -c "'$(CURDIR)/scripts/goversioncheck.sh' '$(GO_VERSION_MIN)'"
 	@$(GO_CMD) generate $($(GO_CMD) list ./... | grep -v /vendor/)
