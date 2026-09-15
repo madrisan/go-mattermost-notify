@@ -39,7 +39,7 @@ See the Mattermost API documentation:
   get /users/me`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return fmt.Errorf("An endpoint must be specified in the command-line arguments")
+			return fmt.Errorf("an endpoint must be specified in the command-line arguments")
 		}
 		var opts = config.Options{
 			ConnectionTimeout: mattermostConnectionTimeout,
@@ -50,8 +50,7 @@ See the Mattermost API documentation:
 			return err
 		}
 
-		mattermost.PrettyPrint(os.Stdout, response)
-		return nil
+		return mattermost.PrettyPrint(os.Stdout, response)
 	},
 }
 
