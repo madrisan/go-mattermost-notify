@@ -26,6 +26,17 @@ IMPROVEMENTS:
    from go.mod: they had been pulled in as real module requirements by
    `make bootstrap`'s use of `go get -u` instead of `go install`, even
    though neither is imported by this module's code.
+ * Migrate to golangci-lint v2 and golangci-lint-action v9 (the last
+   golangci-lint-action release supporting v1.x only ships a Node 20
+   runtime, which GitHub is deprecating). Add a minimal `.golangci.yml`
+   declaring the v2 config schema.
+
+BUG FIXES:
+
+ * Check a handful of previously-ignored error return values
+   (mattermost.PrettyPrint, response.Body.Close, fmt.Fprintln),
+   surfaced by golangci-lint v2's default ruleset.
+ * Lowercase an error string per Go convention (ST1005).
 
 ## 1.3.2 -- (Mar 21, 2025)
 
