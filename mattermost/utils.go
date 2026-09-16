@@ -106,7 +106,7 @@ func CreateMsgPayload(
 func PrettyPrint(w io.Writer, v interface{}) (err error) {
 	b, err := json.MarshalIndent(v, "", "  ")
 	if err == nil {
-		fmt.Fprintln(w, string(b))
+		_, err = fmt.Fprintln(w, string(b))
 	}
 	return
 }

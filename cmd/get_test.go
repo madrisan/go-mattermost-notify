@@ -25,7 +25,7 @@ import (
 func TestCmdGet(t *testing.T) {
 	check := "missing endpoint"
 	args := []string{"get"}
-	shouldBe := "Error: An endpoint must be specified in the command-line arguments"
+	shouldBe := "Error: an endpoint must be specified in the command-line arguments"
 
 	buf := new(bytes.Buffer)
 	rootCmd.SetOut(buf)

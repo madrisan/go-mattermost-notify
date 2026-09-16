@@ -72,7 +72,7 @@ func queryAPIv4(method, endpoint string, payload io.Reader, opts config.Options)
 	}
 
 	// Read body
-	defer response.Body.Close()
+	defer func() { _ = response.Body.Close() }()
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {

@@ -216,7 +216,9 @@ var postCmd = &cobra.Command{
 			return err
 		}
 		if !viper.GetBool("quiet") {
-			mattermost.PrettyPrint(os.Stdout, response)
+			if err := mattermost.PrettyPrint(os.Stdout, response); err != nil {
+				return err
+			}
 		}
 
 		return nil
